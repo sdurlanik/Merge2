@@ -9,13 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1dc1955fb1744aa7ae0123759ee3faf5, type: 3}
+  m_Script: {fileID: 11500000, guid: ef48c82d9acd450fb955793ba5ae560c, type: 3}
   m_Name: P1_5
   m_EditorClassIdentifier: 
-  itemName: P1_5
-  itemPrefab: {fileID: 4399491771607328051, guid: 27b10d8fa78bb4f409eaa793870e9c79, type: 3}
-  family: 1
-  level: 5
-  icon: {fileID: 21300000, guid: 066a1cdfeb37b6643955d409464100aa, type: 3}
-  canProduce: 0
-  productionChances: []
+  _itemName: P1_5
+  _itemPrefab: {fileID: 4399491771607328051, guid: 27b10d8fa78bb4f409eaa793870e9c79, type: 3}
+  _family: 1
+  _level: 5
+  _icon: {fileID: 21300000, guid: 066a1cdfeb37b6643955d409464100aa, type: 3}
