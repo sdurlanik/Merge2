@@ -1,4 +1,5 @@
-﻿using Sdurlanik.Merge2.Core;
+﻿using System;
+using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Data;
 using Sdurlanik.Merge2.GridSystem;
 using Sdurlanik.Merge2.Items;
@@ -41,11 +42,37 @@ namespace Sdurlanik.Merge2.Services
             targetCell.PlaceItem(itemMono);
         }
 
-        public static void Merge(Item a, Item b, ItemSO resultSO, Cell targetCell)
+        public static void Merge(Item firstItem, Item secondItem, ItemSO resultSO, Cell targetCell)
         {
-            a.CurrentCell.DestroyItem();
-            b.CurrentCell.DestroyItem();
-            ItemFactory.Create(resultSO, targetCell);
+            var animationsCompleted = 0;
+
+            var cellA = firstItem.CurrentCell;
+            var cellB = secondItem.CurrentCell;
+        
+            cellA.ClearItem();
+            cellB.ClearItem();
+
+            firstItem.AnimateMerge(targetCell.transform.position, () =>
+            {
+               ServiceLocator.Get<ObjectPooler>().ReturnObjectToPool(firstItem.ItemDataSO.ItemPrefab.name, firstItem.gameObject);
+                OnOneAnimationComplete();
+            });
+        
+            secondItem.AnimateMerge(targetCell.transform.position, () =>
+            {
+                ServiceLocator.Get<ObjectPooler>().ReturnObjectToPool(secondItem.ItemDataSO.ItemPrefab.name, secondItem.gameObject);
+                OnOneAnimationComplete();
+            });
+            return;
+
+            void OnOneAnimationComplete()
+            {
+                animationsCompleted++;
+                if (animationsCompleted == 2)
+                {
+                    ItemFactory.Create(resultSO, targetCell);
+                }
+            }
         }
     }
 

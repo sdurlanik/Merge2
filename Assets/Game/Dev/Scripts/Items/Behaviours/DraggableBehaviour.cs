@@ -1,4 +1,5 @@
-﻿using Sdurlanik.Merge2.Data;
+﻿using DG.Tweening;
+using Sdurlanik.Merge2.Data;
 using Sdurlanik.Merge2.GridSystem;
 using UnityEngine;
 
@@ -67,7 +68,7 @@ namespace Sdurlanik.Merge2.Items.Behaviours
            if (!actionWasTaken)
            {
                _transform.SetParent(_originalParent);
-               _transform.localPosition = Vector3.zero;
+               _transform.DOLocalMove(Vector3.zero, 0.3f).SetEase(Ease.OutBack);
            }
        }
    }

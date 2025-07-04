@@ -20,7 +20,7 @@ namespace Sdurlanik.Merge2.GridSystem
         {
             OccupiedItem = item;
             item.transform.SetParent(transform);
-            item.transform.localPosition = Vector3.zero;
+            item.AnimateMoveTo(transform.position); 
             item.SetCurrentCell(this);
         }
 
@@ -38,6 +38,17 @@ namespace Sdurlanik.Merge2.GridSystem
                 
             EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
             OccupiedItem = null;
+        }
+        
+        public void ConsumeItemWithAnimation()
+        {
+            if (IsEmpty) return;
+
+            OccupiedItem.AnimateConsumption();
+            
+            ClearItem();
+            
+            EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
         }
     }
 }

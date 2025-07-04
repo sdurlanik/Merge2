@@ -1,4 +1,5 @@
 ﻿using System;
+using DG.Tweening;
 using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.GridSystem;
 using Sdurlanik.Merge2.Items.Behaviours;
@@ -103,5 +104,41 @@ namespace Sdurlanik.Merge2.Items
         {
             CurrentCell = cell;
         }
+        
+        public void AnimateMoveTo(Vector3 targetPosition, float duration = 0.25f)
+        {
+            transform.DOMove(targetPosition, duration).SetEase(Ease.OutQuad);
+        }
+        public void AnimateMerge(Vector3 targetPoint, Action onComplete)
+        {
+            transform.DOMove(targetPoint, 0.2f).SetEase(Ease.InBack).OnComplete(() =>
+            {
+                onComplete?.Invoke();
+            });
+            transform.DOScale(Vector3.zero, 0.2f);
+        }
+
+        public void AnimateAppear()
+        {
+            transform.localScale = Vector3.zero;
+            transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+        }
+        
+        public void AnimateConsumption()
+        {
+            var poolTag = ItemDataSO.ItemPrefab.name;
+            var sequence = DOTween.Sequence();
+
+            sequence.Join(transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack))
+                .Join(GetComponent<SpriteRenderer>().DOFade(0f, 0.3f))
+                .OnComplete(() =>
+                {
+                   ServiceLocator.Get<ObjectPooler>().ReturnObjectToPool(poolTag, gameObject);
+                    
+                    transform.localScale = Vector3.one;
+                    GetComponent<SpriteRenderer>().DOFade(1f, 0);
+                });
+        }
+        
     }
 }

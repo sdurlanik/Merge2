@@ -14,7 +14,7 @@ namespace Sdurlanik.Merge2.UI
         [SerializeField] private TextMeshProUGUI _rewardText;
         [SerializeField] private Transform _requirementsContainer;
         [SerializeField] private Button _completeButton;
-        [SerializeField] private GameObject _readyIndicator; // Tamamlanmaya hazırsa aktif olacak tik işareti/parlama
+        [SerializeField] private GameObject _readyIndicator;
 
         [Header("Prefabs")]
         [SerializeField] private RequirementIconUI _requirementIconPrefab;

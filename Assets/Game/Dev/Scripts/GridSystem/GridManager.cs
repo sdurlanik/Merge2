@@ -74,15 +74,19 @@ namespace Sdurlanik.Merge2.GridSystem
         {
             foreach (var requirement in requirements)
             {
-                var amountToConsume = requirement.Amount;
-                
-                for (int i = 0; i < amountToConsume; i++)
+                for (int i = 0; i < requirement.Amount; i++)
                 {
-                    var cellToConsume = _cells.FirstOrDefault(c => !c.IsEmpty && c.OccupiedItem.ItemDataSO == requirement.RequiredItem);
+                    Cell cellToConsume = _cells.FirstOrDefault(c => 
+                        !c.IsEmpty && c.OccupiedItem.ItemDataSO == requirement.RequiredItem);
 
                     if (cellToConsume != null)
                     {
-                        cellToConsume.DestroyItem();
+                        cellToConsume.ConsumeItemWithAnimation();
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Could not find required item: {requirement.RequiredItem.name} to consume for order.");
+                        break; 
                     }
                 }
             }
