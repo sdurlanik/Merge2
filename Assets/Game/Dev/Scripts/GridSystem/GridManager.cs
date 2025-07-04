@@ -7,17 +7,12 @@ using UnityEngine.Serialization;
 
 namespace Sdurlanik.Merge2.GridSystem
 {
-    public class GridManager : MonoBehaviour
+    public class GridManager : Singleton<GridManager>
     {
-        public static GridManager Instance; // Singleton
         [SerializeField] private GridSettingsSO _gridSettings;
 
         private readonly List<Cell> _cells = new List<Cell>();
 
-        private void Awake()
-        {
-            Instance = this;
-        }
 
         public void CreateGrid()
         {

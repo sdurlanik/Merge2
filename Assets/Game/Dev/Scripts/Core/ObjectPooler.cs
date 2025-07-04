@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Sdurlanik.Merge2.Core
 {
-    public class ObjectPooler : MonoBehaviour
+    public class ObjectPooler : Singleton<ObjectPooler>
     {
         public static ObjectPooler Instance { get; private set; }
 
@@ -13,15 +13,8 @@ namespace Sdurlanik.Merge2.Core
         
         private Transform _pooledObjectsParent;
 
-        private void Awake()
+        private void Start()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-            Instance = this;
-
             _pooledObjectsParent = transform;
         }
 
