@@ -16,6 +16,7 @@ namespace Sdurlanik.Merge2.Managers
             GridManager.Instance.CreateGrid();
             CreateItemPools();
             BoardSetupService.SetupInitialBoard();
+            OrderManager.Instance.TryToGenerateNewOrders();
         }
         
         private void CreateItemPools()

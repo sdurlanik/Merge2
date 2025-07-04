@@ -31,5 +31,40 @@ namespace Sdurlanik.Merge2.GridSystem
             emptyCell = _cells.Find(c => c.IsEmpty);
             return emptyCell != null;
         }
+        
+        public int GetHighestGeneratorLevelOnBoard()
+        {
+            int maxLevel = 0;
+            foreach (var cell in _cells)
+            {
+                if (!cell.IsEmpty && cell.OccupiedItem.ItemDataSO is GeneratorSO generatorSO)
+                {
+                    if (generatorSO.Level > maxLevel)
+                    {
+                        maxLevel = generatorSO.Level;
+                    }
+                }
+            }
+            return maxLevel;
+        }
+        
+        public Dictionary<ItemSO, int> GetCurrentItemCountsOnBoard()
+        {
+            var itemCounts = new Dictionary<ItemSO, int>();
+            for (var index = 0; index < _cells.Count; index++)
+            {
+                var cell = _cells[index];
+                if (!cell.IsEmpty)
+                {
+                    var itemSO = cell.OccupiedItem.ItemDataSO;
+                    if (!itemCounts.TryAdd(itemSO, 1))
+                    {
+                        itemCounts[itemSO]++;
+                    }
+                }
+            }
+
+            return itemCounts;
+        }
     }
 }

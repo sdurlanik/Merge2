@@ -1,6 +1,7 @@
 ﻿using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Items;
 using Sdurlanik.Merge2.Data;
+using Sdurlanik.Merge2.Events;
 using Sdurlanik.Merge2.GridSystem;
 using UnityEngine;
 
@@ -10,16 +11,17 @@ namespace Sdurlanik.Merge2.Services
     {
             public static Item Create(ItemSO so, Cell targetCell)
             {
-                GameObject newItemObject = ObjectPooler.Instance.GetObjectFromPool(so.ItemPrefab.name);
+                var newItemObject = ObjectPooler.Instance.GetObjectFromPool(so.ItemPrefab.name);
                 if (newItemObject == null) return null;
 
-                Item newItem = newItemObject.GetComponent<Item>();
+                var newItem = newItemObject.GetComponent<Item>();
             
                 newItem.Init(so);
                 targetCell.PlaceItem(newItem);
             
                 newItemObject.SetActive(true);
-            
+                EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
+
                 return newItem;
             }
     }

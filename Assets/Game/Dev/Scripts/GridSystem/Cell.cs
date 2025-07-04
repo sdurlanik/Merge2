@@ -1,4 +1,5 @@
 ﻿using Sdurlanik.Merge2.Core;
+using Sdurlanik.Merge2.Events;
 using Sdurlanik.Merge2.Items;
 using UnityEngine;
 
@@ -29,6 +30,7 @@ namespace Sdurlanik.Merge2.GridSystem
             var poolTag = OccupiedItem.ItemDataSO.ItemPrefab.name;
             ObjectPooler.Instance.ReturnObjectToPool(poolTag, OccupiedItem.gameObject);
                 
+            EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
             OccupiedItem = null;
         }
     }
