@@ -8,7 +8,8 @@ namespace Sdurlanik.Merge2.Data
     {
         [Header("Item Settings")]
         [SerializeField] private string _itemName;
-        [SerializeField] private Item _itemPrefab;
+        [SerializeField] private Item _itemPrefab; // We might want to use different prefabs for different items, 
+                                                   // so it's better to keep this as a reference to the prefab.
         [SerializeField] private ItemFamily _family;
         [SerializeField] private int _level;
         [SerializeField] private Sprite _icon;

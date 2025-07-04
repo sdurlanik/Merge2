@@ -1,4 +1,5 @@
-﻿using Sdurlanik.Merge2.Items;
+﻿using Sdurlanik.Merge2.Core;
+using Sdurlanik.Merge2.Items;
 using UnityEngine;
 
 namespace Sdurlanik.Merge2.GridSystem
@@ -23,10 +24,12 @@ namespace Sdurlanik.Merge2.GridSystem
 
         public void DestroyItem()
         {
-            if (OccupiedItem != null)
-            {
-                Destroy(OccupiedItem.gameObject); ClearItem();
-            }
+            if (OccupiedItem == null) return;
+            
+            var poolTag = OccupiedItem.ItemDataSO.ItemPrefab.name;
+            ObjectPooler.Instance.ReturnObjectToPool(poolTag, OccupiedItem.gameObject);
+                
+            OccupiedItem = null;
         }
     }
 }

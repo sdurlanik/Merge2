@@ -3,7 +3,7 @@ using UnityEngine.Serialization;
 
 namespace Sdurlanik.Merge2.Data
 {
-        [CreateAssetMenu(fileName = "InteractionSettings", menuName = "Merge2/Interaction Settings")]
+        [CreateAssetMenu(fileName = "InteractionSettings", menuName = "Merge2/Settings/Interaction Settings")]
         public class InteractionSettingsSO : ScriptableObject
         {
             [Header("Interaction Settings")]
