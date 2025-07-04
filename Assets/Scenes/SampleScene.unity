@@ -396,7 +396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5fa6973e87242dda5b027beb8a73b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allItems:
+  AllItems:
   - {fileID: 11400000, guid: e004db08f8c37964098bbf4a427ca449, type: 2}
   - {fileID: 11400000, guid: 1839184375421114990dc40997f9bf3c, type: 2}
   - {fileID: 11400000, guid: ad11b90e2e725574c8a1fa18cf9b8453, type: 2}
@@ -949,14 +949,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba68acb217f640d6b05ceced4995ef71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactableLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  dropDetectionRadius: 0.2
-  dropZoneLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  dragThreshold: 0.2
+  _settings: {fileID: 11400000, guid: 6e61938c14931934bb837d90d32b294c, type: 2}
 --- !u!4 &432668669
 Transform:
   m_ObjectHideFlags: 0
@@ -3185,9 +3178,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9543848eddf384649ababab71169ca75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellPrefab: {fileID: 2434077296577505761, guid: ad228e3c579156945beef0e4b4d0a4a2, type: 3}
-  size: 5
-  cellSpace: 2.8
+  CellPrefab: {fileID: 2434077296577505761, guid: ad228e3c579156945beef0e4b4d0a4a2, type: 3}
+  Size: 5
+  CellSpace: 3
 --- !u!4 &1957105543
 Transform:
   m_ObjectHideFlags: 0
