@@ -35,5 +35,15 @@ namespace Sdurlanik.Merge2.Managers
                 AmountChanged = amount
             });
         }
+        
+        public void LoadCurrency(int loadedCoins)
+        {
+            CurrentCoins = loadedCoins;
+            EventBus<PlayerCurrencyUpdatedEvent>.Publish(new PlayerCurrencyUpdatedEvent
+            {
+                NewTotalAmount = CurrentCoins,
+                AmountChanged = 0
+            });
+        }
     }
 }

@@ -24,6 +24,7 @@ namespace Sdurlanik.Merge2.GridSystem
                 var pos = new Vector2(x * _gridSettings.CellSpace, y * _gridSettings.CellSpace);
                 var cell = Instantiate(_gridSettings.CellPrefab, pos, Quaternion.identity, transform);
                 cell.gameObject.name = $"Cell_{x}_{y}";
+                cell.Init(new Vector2Int(x, y));
                 _cells.Add(cell);
             }
         }
@@ -85,6 +86,46 @@ namespace Sdurlanik.Merge2.GridSystem
                     }
                 }
             }
+        }
+        
+        public List<ItemSaveData> GetItemsForSaving()
+        {
+            var itemsToSave = new List<ItemSaveData>();
+            foreach (var cell in _cells)
+            {
+                if (!cell.IsEmpty)
+                {
+                    itemsToSave.Add(new ItemSaveData
+                    {
+                        ItemSOName = cell.OccupiedItem.ItemDataSO.name,
+                        CellGridPosition = cell.GridPos
+                    });
+                }
+            }
+            return itemsToSave;
+        }
+
+        public void LoadItemsFromSave(List<ItemSaveData> savedItems)
+        {
+            foreach (var cell in _cells)
+            {
+                if (!cell.IsEmpty) cell.DestroyItem();
+            }
+            
+            foreach (var itemData in savedItems)
+            {
+                var cell = GetCellAt(itemData.CellGridPosition);
+                var itemSO = DataBank.Instance.GetSOByName(itemData.ItemSOName);
+                if (cell != null && itemSO != null && cell.IsEmpty)
+                {
+                    ItemFactory.Create(itemSO, cell);
+                }
+            }
+        }
+        
+        private Cell GetCellAt(Vector2Int gridPos)
+        {
+            return _cells.FirstOrDefault(c => c.GridPos == gridPos);
         }
     }
 }

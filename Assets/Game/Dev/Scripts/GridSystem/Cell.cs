@@ -9,7 +9,13 @@ namespace Sdurlanik.Merge2.GridSystem
     {
         public Item OccupiedItem { get; private set; }
         public bool IsEmpty => OccupiedItem == null;
-
+        
+        public Vector2Int GridPos { get; private set; }
+        
+        public void Init(Vector2Int gridPos)
+        {
+            GridPos = gridPos;
+        }
         public void PlaceItem(Item item)
         {
             OccupiedItem = item;

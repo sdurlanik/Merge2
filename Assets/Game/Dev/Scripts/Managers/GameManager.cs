@@ -8,20 +8,70 @@ using UnityEngine;
 
 namespace Sdurlanik.Merge2.Managers
 {
-    public class GameManager : MonoBehaviour
+    public class GameManager : Singleton<GameManager>
     {
         [SerializeField] private PoolSettingsSO _poolSettings;
+        
+        protected override void Awake()
+        {
+            base.Awake();
+            Application.targetFrameRate = 60;
+        }
         private void Start()
         {
-            GridManager.Instance.CreateGrid();
             CreateItemPools();
-            BoardSetupService.SetupInitialBoard();
-            OrderManager.Instance.TryToGenerateNewOrders();
+            LoadGameState();
         }
         
         private void CreateItemPools()
         { 
             ObjectPooler.Instance.CreatePool(_poolSettings);
+        }
+        
+        private void OnApplicationQuit()
+        {
+            SaveGameState();
+        }
+        
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            if (pauseStatus)
+            {
+                SaveGameState();
+            }
+        }
+        
+        private void SaveGameState()
+        {
+            var data = new PlayerData
+            {
+                Coins = CurrencyManager.Instance.CurrentCoins,
+                GridItems = GridManager.Instance.GetItemsForSaving(),
+                ActiveOrderSONames = OrderManager.Instance.GetOrdersForSaving()
+            };
+            
+            SaveLoadService.SaveGame(data);
+        }
+        
+        private void LoadGameState()
+        {
+            Debug.Log("Loading game state...");
+            var data = SaveLoadService.LoadGame();
+            
+            CurrencyManager.Instance.LoadCurrency(data.Coins);
+            
+            GridManager.Instance.CreateGrid();
+            
+            if (data.GridItems.Count > 0)
+            {
+                GridManager.Instance.LoadItemsFromSave(data.GridItems);
+                OrderManager.Instance.LoadOrdersFromSave(data.ActiveOrderSONames);
+            }
+            else
+            {
+                BoardSetupService.SetupInitialBoard();
+                OrderManager.Instance.TryToGenerateNewOrders();
+            }
         }
     }
 }

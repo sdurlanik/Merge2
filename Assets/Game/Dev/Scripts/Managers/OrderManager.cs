@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Sdurlanik.Merge2.Core;
+using Sdurlanik.Merge2.Data;
 using Sdurlanik.Merge2.Data.Orders;
 using Sdurlanik.Merge2.Events;
 using Sdurlanik.Merge2.GridSystem;
@@ -92,6 +93,28 @@ namespace Sdurlanik.Merge2.Managers
             Debug.Log($"Order completed: {orderToComplete.OrderData.OrderName}. Reward: {orderToComplete.CalculatedReward}x coin.");
 
             TryToGenerateNewOrders();
+        }
+        
+        public List<string> GetOrdersForSaving()
+        {
+            return _activeOrders.Select(order => order.OrderData.name).ToList();
+        }
+
+        public void LoadOrdersFromSave(List<string> savedOrderNames)
+        {
+            _activeOrders.Clear();
+    
+            foreach (var soName in savedOrderNames)
+            {
+                var orderSO = DataBank.Instance.AllOrderTemplates.Find(so => so.name == soName);
+                if (orderSO != null)
+                {
+                    _activeOrders.Add(new Order(orderSO));
+                }
+            }
+
+            CheckAllOrdersStatus();
+            EventBus<ActiveOrdersUpdatedEvent>.Publish(new ActiveOrdersUpdatedEvent { ActiveOrders = _activeOrders });
         }
     }
 }
