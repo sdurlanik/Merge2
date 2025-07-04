@@ -14,11 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OrderName: Third
   RequiredItems:
-  - RequiredItem: {fileID: 11400000, guid: 09ba11965825c8a4e9ffdc35c1e0d54d, type: 2}
-    Amount: 1
   - RequiredItem: {fileID: 11400000, guid: ad16b323b4118dd46a05714da30b6ac7, type: 2}
     Amount: 1
   BaseCoinReward: 30
   CoinRewardPerLevelMultiplier: 1.5
-  RequiredGeneratorMinLevel: 5
+  RequiredGeneratorMinLevel: 4
   RequiredGeneratorMaxLevel: 10
