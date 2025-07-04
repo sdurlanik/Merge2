@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Data;
+using Sdurlanik.Merge2.Data.Orders;
 using Sdurlanik.Merge2.Services;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -65,6 +67,24 @@ namespace Sdurlanik.Merge2.GridSystem
             }
 
             return itemCounts;
+        }
+        
+        public void ConsumeItems(List<OrderRequirement> requirements)
+        {
+            foreach (var requirement in requirements)
+            {
+                var amountToConsume = requirement.Amount;
+                
+                for (int i = 0; i < amountToConsume; i++)
+                {
+                    var cellToConsume = _cells.FirstOrDefault(c => !c.IsEmpty && c.OccupiedItem.ItemDataSO == requirement.RequiredItem);
+
+                    if (cellToConsume != null)
+                    {
+                        cellToConsume.DestroyItem();
+                    }
+                }
+            }
         }
     }
 }

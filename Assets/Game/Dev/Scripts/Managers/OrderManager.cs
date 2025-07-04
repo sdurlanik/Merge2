@@ -82,10 +82,11 @@ namespace Sdurlanik.Merge2.Managers
                 return;
             }
 
-            // TODO:Remove item from the board that was used to complete the order. (GridManager)
+            GridManager.Instance.ConsumeItems(orderToComplete.Requirements);
             
-            // TODO: Grant player the reward for completing the order. (CurrencyManager maybe)
+            EventBus<GrantRewardEvent>.Publish(new GrantRewardEvent { CoinAmount = orderToComplete.CalculatedReward });
 
+            orderToComplete.MarkAsCompleted();
             _activeOrders.Remove(orderToComplete);
             
             Debug.Log($"Order completed: {orderToComplete.OrderData.OrderName}. Reward: {orderToComplete.CalculatedReward}x coin.");

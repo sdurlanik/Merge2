@@ -42,22 +42,24 @@ namespace Sdurlanik.Merge2.Data.Orders
         
         public void UpdateStatus(Dictionary<ItemSO, int> itemsOnBoard)
         {
-            if (Status != OrderStatus.Active) return;
+            if (Status == OrderStatus.Completed) return;
 
             var allRequirementsMet = true;
             foreach (var req in Requirements)
             {
-                if (!itemsOnBoard.TryGetValue(req.RequiredItem, out int countOnBoard) || countOnBoard < req.Amount)
+                if (!itemsOnBoard.TryGetValue(req.RequiredItem, out var countOnBoard) || countOnBoard < req.Amount)
                 {
                     allRequirementsMet = false;
                     break;
                 }
             }
             
-            if (allRequirementsMet)
-            {
-                Status = OrderStatus.ReadyToComplete;
-            }
+            Status = allRequirementsMet ? OrderStatus.ReadyToComplete : OrderStatus.Active;
+        }
+        
+        public void MarkAsCompleted()
+        {
+            Status = OrderStatus.Completed;
         }
     }
 }
