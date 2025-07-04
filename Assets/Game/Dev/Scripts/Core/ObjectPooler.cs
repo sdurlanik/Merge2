@@ -6,8 +6,6 @@ namespace Sdurlanik.Merge2.Core
 {
     public class ObjectPooler : Singleton<ObjectPooler>
     {
-        public static ObjectPooler Instance { get; private set; }
-
         private readonly Dictionary<string, Queue<GameObject>> _poolDictionary = new();
         private readonly Dictionary<string, GameObject> _prefabCache = new();
         
