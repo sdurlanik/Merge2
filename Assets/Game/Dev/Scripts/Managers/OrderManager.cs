@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Sdurlanik.Merge2.Managers
 {
-    public class OrderManager : Singleton<OrderManager>
+    public class OrderManager : MonoBehaviour
     {
         [Header("Order Settings")]
         [SerializeField] private int _maxActiveOrders = 3;
@@ -35,7 +35,7 @@ namespace Sdurlanik.Merge2.Managers
 
         private void CheckAllOrdersStatus()
         {
-            var itemsOnBoard = GridManager.Instance.GetCurrentItemCountsOnBoard();
+            var itemsOnBoard = ServiceLocator.Get<GridManager>().GetCurrentItemCountsOnBoard();
             var statusChanged = false;
 
             foreach (var order in _activeOrders)
@@ -83,7 +83,7 @@ namespace Sdurlanik.Merge2.Managers
                 return;
             }
 
-            GridManager.Instance.ConsumeItems(orderToComplete.Requirements);
+            ServiceLocator.Get<GridManager>().ConsumeItems(orderToComplete.Requirements);
             
             EventBus<GrantRewardEvent>.Publish(new GrantRewardEvent { CoinAmount = orderToComplete.CalculatedReward });
 
@@ -106,7 +106,7 @@ namespace Sdurlanik.Merge2.Managers
     
             foreach (var soName in savedOrderNames)
             {
-                var orderSO = DataBank.Instance.AllOrderTemplates.Find(so => so.name == soName);
+                var orderSO = ServiceLocator.Get<DataBank>().AllOrderTemplates.Find(so => so.name == soName);
                 if (orderSO != null)
                 {
                     _activeOrders.Add(new Order(orderSO));

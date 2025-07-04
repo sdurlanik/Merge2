@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Sdurlanik.Merge2.Core
 {
-    public class ObjectPooler : Singleton<ObjectPooler>
+    public class ObjectPooler : MonoBehaviour
     {
         private readonly Dictionary<string, Queue<GameObject>> _poolDictionary = new();
         private readonly Dictionary<string, GameObject> _prefabCache = new();

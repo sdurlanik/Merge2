@@ -34,7 +34,7 @@ namespace Sdurlanik.Merge2.GridSystem
             if (OccupiedItem == null) return;
             
             var poolTag = OccupiedItem.ItemDataSO.ItemPrefab.name;
-            ObjectPooler.Instance.ReturnObjectToPool(poolTag, OccupiedItem.gameObject);
+            ServiceLocator.Get<ObjectPooler>().ReturnObjectToPool(poolTag, OccupiedItem.gameObject);
                 
             EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
             OccupiedItem = null;

@@ -11,7 +11,7 @@ namespace Sdurlanik.Merge2.Services
     {
             public static Item Create(ItemSO so, Cell targetCell)
             {
-                var newItemObject = ObjectPooler.Instance.GetObjectFromPool(so.ItemPrefab.name);
+                var newItemObject = ServiceLocator.Get<ObjectPooler>().GetObjectFromPool(so.ItemPrefab.name);
                 if (newItemObject == null) return null;
 
                 var newItem = newItemObject.GetComponent<Item>();

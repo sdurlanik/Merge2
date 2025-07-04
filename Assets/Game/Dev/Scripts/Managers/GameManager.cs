@@ -8,13 +8,27 @@ using UnityEngine;
 
 namespace Sdurlanik.Merge2.Managers
 {
-    public class GameManager : Singleton<GameManager>
+    public class GameManager : MonoBehaviour
     {
+        [Header("Manager References")]
+        [SerializeField] private GridManager _gridManager;
+        [SerializeField] private OrderManager _orderManager;
+        [SerializeField] private CurrencyManager _currencyManager;
+        [SerializeField] private DataBank _dataBank;
+        [SerializeField] private ItemInteractionManager _itemInteractionManager;
+        [SerializeField] private ObjectPooler _objectPooler;
+        
         [SerializeField] private PoolSettingsSO _poolSettings;
         
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
+            ServiceLocator.Register(_gridManager);
+            ServiceLocator.Register(_orderManager);
+            ServiceLocator.Register(_currencyManager);
+            ServiceLocator.Register(_dataBank);
+            ServiceLocator.Register(_itemInteractionManager);
+            ServiceLocator.Register(_objectPooler);
+            
             Application.targetFrameRate = 60;
         }
         private void Start()
@@ -25,7 +39,7 @@ namespace Sdurlanik.Merge2.Managers
         
         private void CreateItemPools()
         { 
-            ObjectPooler.Instance.CreatePool(_poolSettings);
+           ServiceLocator.Get<ObjectPooler>().CreatePool(_poolSettings);
         }
         
         private void OnApplicationQuit()
@@ -45,9 +59,9 @@ namespace Sdurlanik.Merge2.Managers
         {
             var data = new PlayerData
             {
-                Coins = CurrencyManager.Instance.CurrentCoins,
-                GridItems = GridManager.Instance.GetItemsForSaving(),
-                ActiveOrderSONames = OrderManager.Instance.GetOrdersForSaving()
+                Coins = ServiceLocator.Get<CurrencyManager>().CurrentCoins,
+                GridItems = ServiceLocator.Get<GridManager>().GetItemsForSaving(),
+                ActiveOrderSONames = ServiceLocator.Get<OrderManager>().GetOrdersForSaving()
             };
             
             SaveLoadService.SaveGame(data);
@@ -58,19 +72,19 @@ namespace Sdurlanik.Merge2.Managers
             Debug.Log("Loading game state...");
             var data = SaveLoadService.LoadGame();
             
-            CurrencyManager.Instance.LoadCurrency(data.Coins);
+            ServiceLocator.Get<CurrencyManager>().LoadCurrency(data.Coins);
             
-            GridManager.Instance.CreateGrid();
+            ServiceLocator.Get<GridManager>().CreateGrid();
             
             if (data.GridItems.Count > 0)
             {
-                GridManager.Instance.LoadItemsFromSave(data.GridItems);
-                OrderManager.Instance.LoadOrdersFromSave(data.ActiveOrderSONames);
+                ServiceLocator.Get<GridManager>().LoadItemsFromSave(data.GridItems);
+                ServiceLocator.Get<OrderManager>().LoadOrdersFromSave(data.ActiveOrderSONames);
             }
             else
             {
                 BoardSetupService.SetupInitialBoard();
-                OrderManager.Instance.TryToGenerateNewOrders();
+                ServiceLocator.Get<OrderManager>().TryToGenerateNewOrders();
             }
         }
     }

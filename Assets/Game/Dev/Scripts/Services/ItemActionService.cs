@@ -1,4 +1,5 @@
-﻿using Sdurlanik.Merge2.Data;
+﻿using Sdurlanik.Merge2.Core;
+using Sdurlanik.Merge2.Data;
 using Sdurlanik.Merge2.GridSystem;
 using Sdurlanik.Merge2.Items;
 
@@ -13,7 +14,7 @@ namespace Sdurlanik.Merge2.Services
 
             if (a.ItemDataSO.Family == b.ItemDataSO.Family && a.ItemDataSO.Level == b.ItemDataSO.Level)
             {
-                nextSO = DataBank.Instance.GetSO(a.ItemDataSO.Family, a.ItemDataSO.Level + 1);
+                nextSO = ServiceLocator.Get<DataBank>().GetSO(a.ItemDataSO.Family, a.ItemDataSO.Level + 1);
                 return nextSO != null;
             }
             return false;

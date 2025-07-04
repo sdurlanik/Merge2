@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Data.Orders;
 using Sdurlanik.Merge2.Managers;
 using TMPro;
@@ -54,7 +55,7 @@ namespace Sdurlanik.Merge2.UI
         {
             if (_currentOrder is { Status: OrderStatus.ReadyToComplete })
             {
-                OrderManager.Instance.CompleteOrder(_currentOrder);
+                ServiceLocator.Get<OrderManager>().CompleteOrder(_currentOrder);
             }
         }
     }

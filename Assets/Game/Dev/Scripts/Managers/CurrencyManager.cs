@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Sdurlanik.Merge2.Managers
 {
-    public class CurrencyManager : Singleton<CurrencyManager>
+    public class CurrencyManager : MonoBehaviour
     {
         public int CurrentCoins { get; private set; }
 

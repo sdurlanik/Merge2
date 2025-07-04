@@ -9,7 +9,7 @@ using UnityEngine.Serialization;
 
 namespace Sdurlanik.Merge2.GridSystem
 {
-    public class GridManager : Singleton<GridManager>
+    public class GridManager : MonoBehaviour
     {
         [SerializeField] private GridSettingsSO _gridSettings;
 
@@ -115,7 +115,7 @@ namespace Sdurlanik.Merge2.GridSystem
             foreach (var itemData in savedItems)
             {
                 var cell = GetCellAt(itemData.CellGridPosition);
-                var itemSO = DataBank.Instance.GetSOByName(itemData.ItemSOName);
+                var itemSO = ServiceLocator.Get<DataBank>().GetSOByName(itemData.ItemSOName);
                 if (cell != null && itemSO != null && cell.IsEmpty)
                 {
                     ItemFactory.Create(itemSO, cell);

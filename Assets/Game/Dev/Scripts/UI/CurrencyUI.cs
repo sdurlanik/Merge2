@@ -1,4 +1,5 @@
-﻿using Sdurlanik.Merge2.Core;
+﻿using System;
+using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Events;
 using Sdurlanik.Merge2.Managers;
 using TMPro;
@@ -26,7 +27,11 @@ namespace Sdurlanik.Merge2.UI
         private void OnEnable()
         {
             EventBus<PlayerCurrencyUpdatedEvent>.OnEvent += HandleCurrencyUpdated;
-            UpdateText(CurrencyManager.Instance.CurrentCoins);
+        }
+
+        private void Start()
+        {
+            UpdateText(ServiceLocator.Get<CurrencyManager>().CurrentCoins);
         }
 
         private void OnDisable()

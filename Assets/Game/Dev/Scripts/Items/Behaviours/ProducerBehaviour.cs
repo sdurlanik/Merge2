@@ -1,4 +1,5 @@
-﻿using Sdurlanik.Merge2.GridSystem;
+﻿using Sdurlanik.Merge2.Core;
+using Sdurlanik.Merge2.GridSystem;
 using Sdurlanik.Merge2.Data;
 using Sdurlanik.Merge2.Services;
 using UnityEngine;
@@ -23,7 +24,7 @@ namespace Sdurlanik.Merge2.Items.Behaviours
             var productToSpawn = WeightedChanceService.GetRandomItem(_generatorData.ProductionChances);
             if (productToSpawn == null) return;
 
-            if (GridManager.Instance.TryGetEmptyCell(out var emptyCell))
+            if (ServiceLocator.Get<GridManager>().TryGetEmptyCell(out var emptyCell))
             {
                 ItemFactory.Create(productToSpawn, emptyCell);
             }

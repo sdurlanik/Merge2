@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Data;
 using Sdurlanik.Merge2.Data.Orders;
 using Sdurlanik.Merge2.GridSystem;
@@ -10,9 +11,9 @@ namespace Sdurlanik.Merge2.Services
     {
         public static Order GenerateOrder()
         {
-            var maxGeneratorLevel = GridManager.Instance.GetHighestGeneratorLevelOnBoard();
+            var maxGeneratorLevel = ServiceLocator.Get<GridManager>().GetHighestGeneratorLevelOnBoard();
             
-            var allTemplates = DataBank.Instance.AllOrderTemplates;
+            var allTemplates = ServiceLocator.Get<DataBank>().AllOrderTemplates;
             if (allTemplates == null || allTemplates.Count == 0)
             {
                 Debug.LogError("There are no order templates exist in the DataBank.");

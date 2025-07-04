@@ -302,6 +302,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa786ec6328c4aeab5e3669147da5059, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gridManager: {fileID: 1957105542}
+  _orderManager: {fileID: 432668671}
+  _currencyManager: {fileID: 631302978}
+  _dataBank: {fileID: 227394148}
+  _itemInteractionManager: {fileID: 432668668}
+  _objectPooler: {fileID: 884149718}
   _poolSettings: {fileID: 11400000, guid: 39e61f5947017b74991f2d94895dafd0, type: 2}
 --- !u!114 &432668671
 MonoBehaviour:

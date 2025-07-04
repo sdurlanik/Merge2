@@ -5,7 +5,7 @@ using Sdurlanik.Merge2.Data.Orders;
 
 namespace Sdurlanik.Merge2.Data
 {
-    public class DataBank : Singleton<DataBank>
+    public class DataBank : MonoBehaviour
     {
         [Header("Item Data")]
         public List<ItemSO> AllItems;
@@ -15,11 +15,9 @@ namespace Sdurlanik.Merge2.Data
         
         private Dictionary<string, ItemSO> _itemSODictionary;
         
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
             FillItemSODictionary();
-          
         }
         
         private void FillItemSODictionary()
