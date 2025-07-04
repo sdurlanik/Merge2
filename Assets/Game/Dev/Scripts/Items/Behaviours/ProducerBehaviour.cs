@@ -8,19 +8,19 @@ namespace Sdurlanik.Merge2.Items.Behaviours
     public class ProducerBehavior
     {
         private readonly Item _item;
-        private readonly ItemSO _itemData;
+        private readonly GeneratorSO _generatorData;
 
-        public ProducerBehavior(Item item)
+        public ProducerBehavior(Item item, GeneratorSO generatorData)
         {
             _item = item;
-            _itemData = item.ItemDataSO;
+            _generatorData = generatorData;
         }
 
         public void OnTap()
         {
-            if (!_itemData.CanProduce) return;
+            if (!_generatorData.CanProduce) return;
 
-            var productToSpawn = WeightedChanceService.GetRandomItem(_itemData.ProductionChances);
+            var productToSpawn = WeightedChanceService.GetRandomItem(_generatorData.ProductionChances);
             if (productToSpawn == null) return;
 
             if (GridManager.Instance.TryGetEmptyCell(out var emptyCell))

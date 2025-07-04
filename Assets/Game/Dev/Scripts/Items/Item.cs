@@ -22,9 +22,9 @@ namespace Sdurlanik.Merge2.Items
             ItemDataSO = so;
             GetComponent<SpriteRenderer>().sprite = so.Icon;
 
-            if (ItemDataSO.CanProduce)
+            if (ItemDataSO is GeneratorSO { CanProduce: true } generatorData)
             {
-                _producerBehavior = new ProducerBehavior(this);
+                _producerBehavior = new ProducerBehavior(this, generatorData);
             }
             _draggableBehavior = new DraggableBehavior(this);
         }
