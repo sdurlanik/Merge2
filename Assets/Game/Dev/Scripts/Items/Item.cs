@@ -1,13 +1,16 @@
-﻿using Sdurlanik.Merge2.GridSystem;
+﻿using System;
+using Sdurlanik.Merge2.Core;
+using Sdurlanik.Merge2.GridSystem;
 using Sdurlanik.Merge2.Items.Behaviours;
 using Sdurlanik.Merge2.Data;
+using Sdurlanik.Merge2.Events;
 using UnityEngine;
 
 namespace Sdurlanik.Merge2.Items
 {
 
     [RequireComponent(typeof(Collider2D), typeof(SpriteRenderer))]
-    public class Item : MonoBehaviour, IDraggable, ITappable
+    public class Item : MonoBehaviour
     {
         public InteractionSettingsSO InteractionSettings => _interactionSettings;
         public ItemSO ItemDataSO { get; private set; }
@@ -16,6 +19,53 @@ namespace Sdurlanik.Merge2.Items
         [SerializeField] private InteractionSettingsSO _interactionSettings;
         private ProducerBehavior _producerBehavior;
         private DraggableBehavior _draggableBehavior;
+        private bool _isBeingDragged;
+
+        private void OnEnable()
+        {
+            EventBus<ItemTappedEvent>.OnEvent += HandleTap;
+            EventBus<ItemDragBeganEvent>.OnEvent += HandleDragBegan;
+            EventBus<InputDragPerformedEvent>.OnEvent += HandleDragPerformed;
+            EventBus<ItemDragEndedEvent>.OnEvent += HandleDragEnded;
+        }
+        
+        private void OnDisable()
+        {
+            EventBus<ItemTappedEvent>.OnEvent -= HandleTap;
+            EventBus<ItemDragBeganEvent>.OnEvent -= HandleDragBegan;
+            EventBus<InputDragPerformedEvent>.OnEvent -= HandleDragPerformed;
+            EventBus<ItemDragEndedEvent>.OnEvent -= HandleDragEnded;
+        }
+        
+        private void HandleTap(ItemTappedEvent e)
+        {
+            if (e.TappedItem != this) return;
+            
+            _producerBehavior?.OnTap();
+        }
+
+        private void HandleDragBegan(ItemDragBeganEvent e)
+        {
+            if (e.DraggedItem != this) return;
+            
+            _isBeingDragged = true;
+            _draggableBehavior.OnBeginDrag();
+        }
+
+        private void HandleDragPerformed(InputDragPerformedEvent e)
+        {
+            if (!_isBeingDragged) return;
+            
+            _draggableBehavior.OnDrag(e.MousePosition);
+        }
+
+        private void HandleDragEnded(ItemDragEndedEvent e)
+        {
+            if (!_isBeingDragged) return;
+            
+            _isBeingDragged = false;
+            _draggableBehavior.OnEndDrag(e.TargetZone);
+        }
 
         public void Init(ItemSO so)
         {
@@ -33,27 +83,5 @@ namespace Sdurlanik.Merge2.Items
         {
             CurrentCell = cell;
         }
-
-        #region Interface Implementations
-        public void OnTap()
-        {
-            _producerBehavior?.OnTap();
-        }
-
-        public void OnBeginDrag()
-        {
-            _draggableBehavior.OnBeginDrag();
-        }
-
-        public void OnDrag(Vector2 position)
-        {
-            _draggableBehavior.OnDrag(position);
-        }
-
-        public void OnEndDrag(DropZone successDropZone)
-        {
-            _draggableBehavior.OnEndDrag(successDropZone);
-        }
-        #endregion
     }
 }

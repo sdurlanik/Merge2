@@ -1,8 +1,9 @@
 ﻿using Sdurlanik.Merge2.Data;
 using Sdurlanik.Merge2.GridSystem;
 using Sdurlanik.Merge2.Items;
+using Sdurlanik.Merge2.Core;
+using Sdurlanik.Merge2.Events; 
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Sdurlanik.Merge2.Managers
 {
@@ -10,14 +11,15 @@ namespace Sdurlanik.Merge2.Managers
    {
        [SerializeField] private InteractionSettingsSO _settings;
        private Camera _mainCamera;
-       private IInteractable _currentTarget;
-       private IDraggable _draggingTarget;
+       
+       private Item _clickedItem;
        private DropZone _lastDetectedZone;
        
        private Vector2 _startMousePosition;
-       private bool _isPotentialDrag;
+       private bool _isDragging;
        
        private readonly Collider2D[] _dropZoneResults = new Collider2D[1];
+       private InputDragPerformedEvent _reusableDragEvent;
        private void Awake()
        {
            _mainCamera = Camera.main;
@@ -25,52 +27,47 @@ namespace Sdurlanik.Merge2.Managers
    
        private void Update()
        {
-           var mousePosition = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
+           var mousePosition = (Vector2)_mainCamera.ScreenToWorldPoint(Input.mousePosition);
    
            if (Input.GetMouseButtonDown(0))
            {
-               _currentTarget = GetInteractableAt(mousePosition);
-               if (_currentTarget != null)
+               _clickedItem = GetInteractableItemAt(mousePosition);
+               if (_clickedItem != null)
                {
-                   _isPotentialDrag = true;
                    _startMousePosition = mousePosition;
                }
            }
            
            if (Input.GetMouseButton(0))
            {
-               if (_isPotentialDrag && _draggingTarget == null)
+               if (_clickedItem != null && !_isDragging)
                {
                    if (Vector2.Distance(mousePosition, _startMousePosition) > _settings.DragThreshold)
                    {
-                       _isPotentialDrag = false;
-                       if (_currentTarget is IDraggable draggable)
-                       {
-                           _draggingTarget = draggable;
-                           _draggingTarget.OnBeginDrag();
-                       }
+                       _isDragging = true;
+                       EventBus<ItemDragBeganEvent>.Publish(new ItemDragBeganEvent { DraggedItem = _clickedItem });
                    }
                }
                
-               if (_draggingTarget != null)
+               if (_isDragging)
                {
-                   _draggingTarget.OnDrag(mousePosition);
-                   DetectDropZone(((MonoBehaviour)_draggingTarget).transform.position);
+                   //InputDragPerformedEvent is frequently published, so we reuse the same instance to avoid any stuttering
+                   _reusableDragEvent.MousePosition = mousePosition; 
+                   EventBus<InputDragPerformedEvent>.Publish(_reusableDragEvent);
+                   
+                   DetectDropZone(_clickedItem.transform.position);
                }
            }
    
            if (Input.GetMouseButtonUp(0))
            {
-               if (_draggingTarget != null)
+               if (_isDragging)
                {
-                   _draggingTarget.OnEndDrag(_lastDetectedZone);
+                   EventBus<ItemDragEndedEvent>.Publish(new ItemDragEndedEvent { TargetZone = _lastDetectedZone });
                }
-               else if (_isPotentialDrag)
+               else if (_clickedItem != null)
                {
-                   if (_currentTarget is ITappable tappable)
-                   {
-                       tappable.OnTap();
-                   }
+                   EventBus<ItemTappedEvent>.Publish(new ItemTappedEvent { TappedItem = _clickedItem });
                }
                
                ResetInteractionState();
@@ -79,16 +76,15 @@ namespace Sdurlanik.Merge2.Managers
        
        private void ResetInteractionState()
        {
-           _isPotentialDrag = false;
-           _currentTarget = null;
-           _draggingTarget = null;
+           _isDragging = false;
+           _clickedItem = null;
            _lastDetectedZone = null;
        }
        
-       private IInteractable GetInteractableAt(Vector2 position)
+       private Item GetInteractableItemAt(Vector2 position)
        {
            var hit = Physics2D.Raycast(position, Vector2.zero, Mathf.Infinity, _settings.InteractableLayer);
-           return hit.collider?.GetComponent<IInteractable>();
+           return hit.collider?.GetComponent<Item>();
        }
    
        private void DetectDropZone(Vector2 position)
