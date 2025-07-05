@@ -8,12 +8,10 @@ namespace Sdurlanik.Merge2.UI
     public class RequirementIconUI : MonoBehaviour
     {
         [SerializeField] private Image _iconImage;
-        [SerializeField] private TextMeshProUGUI _amountText;
 
-        public void SetRequirement(ItemSO requiredItem, int amount)
+        public void SetRequirement(ItemSO requiredItem)
         {
             _iconImage.sprite = requiredItem.Icon;
-            _amountText.text = $"x{amount}";
         }
     }
 }

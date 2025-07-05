@@ -1,6 +1,4 @@
-﻿// Konum: Sdurlanik.Merge2/Scripts/UI/OrderUIEntry.cs
-
-using System;
+﻿using System;
 using DG.Tweening;
 using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Data.Orders;
@@ -19,18 +17,15 @@ namespace Sdurlanik.Merge2.UI
         [SerializeField] private TextMeshProUGUI _rewardText;
         [SerializeField] private Transform _requirementsContainer;
         [SerializeField] private Button _completeButton;
-        [SerializeField] private GameObject _readyIndicator;
+        [SerializeField] private Image _avatarImage;
 
         [Header("Prefabs")]
         [SerializeField] private RequirementIconUI _requirementIconPrefab;
 
-        [Header("Animation Settings")]
-        [SerializeField] private float _popScale = 1.1f;
-        [SerializeField] private float _animationDuration = 0.3f;
-
         public Order CurrentOrder { get; private set; }
         private CanvasGroup _canvasGroup;
         private AnimationManager _animationManager;
+        private OrderStatus _previousStatus;
 
         private void Awake()
         {
@@ -69,7 +64,7 @@ namespace Sdurlanik.Merge2.UI
 
         public void AnimateOutAndRepopulate(Order newOrder)
         {
-            _completeButton.interactable = false;
+            _completeButton.gameObject.SetActive(false);
             _animationManager.PlayUIEntryOutAnimation(transform, _canvasGroup, () =>
             {
                 InitializeAndAnimateIn(newOrder, 0f);
@@ -80,21 +75,30 @@ namespace Sdurlanik.Merge2.UI
         {
             CurrentOrder = order;
             _rewardText.text = CurrentOrder.CalculatedReward.ToString();
+            _avatarImage.sprite = CurrentOrder.AvatarSprite;
             foreach (Transform child in _requirementsContainer) Destroy(child.gameObject);
             foreach (var requirement in CurrentOrder.Requirements)
             {
                 var iconInstance = Instantiate(_requirementIconPrefab, _requirementsContainer);
-                iconInstance.SetRequirement(requirement.RequiredItem, requirement.Amount);
+                iconInstance.SetRequirement(requirement.RequiredItem);
             }
-            _completeButton.interactable = CurrentOrder.Status == OrderStatus.ReadyToComplete;
-            _readyIndicator.SetActive(CurrentOrder.Status == OrderStatus.ReadyToComplete);
+
+            var isNowReady = CurrentOrder.Status == OrderStatus.ReadyToComplete;
+            _completeButton.gameObject.SetActive(isNowReady);
+            
+            if (isNowReady && _previousStatus != OrderStatus.ReadyToComplete)
+            {
+                ServiceLocator.Get<AnimationManager>().PlayUIReadyStateAnimation(_completeButton.transform);
+            }
+            
+            _previousStatus = CurrentOrder.Status;
         }
 
         private void OnCompleteButtonPressed()
         {
             if (CurrentOrder != null && CurrentOrder.Status == OrderStatus.ReadyToComplete)
             {
-                _completeButton.interactable = false; // Tekrar basılmasını önle
+                _completeButton.gameObject.SetActive(false);
                 ServiceLocator.Get<OrderManager>().CompleteOrder(CurrentOrder);
             }
         }
