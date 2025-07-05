@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// Konum: Sdurlanik.Merge2/Scripts/UI/OrderUIManager.cs
+
+using System.Collections.Generic;
+using System.Linq;
 using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Data.Orders;
 using Sdurlanik.Merge2.Events;
@@ -10,12 +13,21 @@ namespace Sdurlanik.Merge2.UI
     {
         [Header("UI References")]
         [SerializeField] private Transform _ordersContainer;
-
-        [Header("Prefabs")]
         [SerializeField] private OrderUIEntry _orderEntryPrefab;
+        [SerializeField] private int _maxOrdersToDisplay = 3;
 
         private readonly List<OrderUIEntry> _uiEntries = new();
 
+        private void Awake()
+        {
+            for (int i = 0; i < _maxOrdersToDisplay; i++)
+            {
+                var entry = Instantiate(_orderEntryPrefab, _ordersContainer);
+                entry.gameObject.SetActive(false);
+                _uiEntries.Add(entry);
+            }
+        }
+        
         private void OnEnable()
         {
             EventBus<ActiveOrdersUpdatedEvent>.OnEvent += HandleActiveOrdersUpdated;
@@ -28,24 +40,42 @@ namespace Sdurlanik.Merge2.UI
 
         private void HandleActiveOrdersUpdated(ActiveOrdersUpdatedEvent e)
         {
-            var activeOrders = e.ActiveOrders;
+            var newOrders = e.ActiveOrders.ToList();
 
-            while (_uiEntries.Count < activeOrders.Count)
+            var oldOrders = _uiEntries
+                .Where(entry => entry.CurrentOrder != null && entry.gameObject.activeSelf)
+                .Select(entry => entry.CurrentOrder)
+                .ToList();
+
+            var addedOrder = newOrders.Except(oldOrders).FirstOrDefault();
+            
+            var removedOrder = oldOrders.Except(newOrders).FirstOrDefault();
+
+            for (var ındex = 0; ındex < _uiEntries.Count; ındex++)
             {
-                var newEntry = Instantiate(_orderEntryPrefab, _ordersContainer);
-                _uiEntries.Add(newEntry);
+                var uiEntry = _uiEntries[ındex];
+                if (uiEntry.CurrentOrder != null && uiEntry.CurrentOrder != removedOrder)
+                {
+                    uiEntry.UpdateDisplay(uiEntry.CurrentOrder);
+                }
             }
 
-            for (int i = 0; i < _uiEntries.Count; i++)
+            if (removedOrder != null && addedOrder != null)
             {
-                if (i < activeOrders.Count)
+                var entryToReplace = _uiEntries.FirstOrDefault(entry => entry.CurrentOrder == removedOrder);
+                if (entryToReplace != null)
                 {
-                    _uiEntries[i].Populate(activeOrders[i]);
-                    _uiEntries[i].gameObject.SetActive(true);
+                    entryToReplace.AnimateOutAndRepopulate(addedOrder);
                 }
-                else
+            }
+            else if (oldOrders.Count == 0 && newOrders.Count > 0)
+            {
+                for (int i = 0; i < newOrders.Count; i++)
                 {
-                    _uiEntries[i].gameObject.SetActive(false);
+                    if (i < _uiEntries.Count)
+                    {
+                        _uiEntries[i].InitializeAndAnimateIn(newOrders[i], i * 0.1f);
+                    }
                 }
             }
         }
