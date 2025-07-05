@@ -2,7 +2,8 @@
 using Sdurlanik.Merge2.GridSystem;
 using Sdurlanik.Merge2.Items;
 using Sdurlanik.Merge2.Core;
-using Sdurlanik.Merge2.Events; 
+using Sdurlanik.Merge2.Events;
+using Sdurlanik.Merge2.Services;
 using UnityEngine;
 
 namespace Sdurlanik.Merge2.Managers
@@ -17,6 +18,7 @@ namespace Sdurlanik.Merge2.Managers
        
        private Vector2 _startMousePosition;
        private bool _isDragging;
+       private Item _lastMergeableTarget; 
        
        private readonly Collider2D[] _dropZoneResults = new Collider2D[1];
        private InputDragPerformedEvent _reusableDragEvent;
@@ -43,7 +45,6 @@ namespace Sdurlanik.Merge2.Managers
            {
                if (_clickedInteractable != null && !_isDragging)
                {
-                   // ...ve sürükleme eşiği aşıldıysa...
                    if (Vector2.Distance(mousePosition, _startMousePosition) > _settings.DragThreshold)
                    {
                        if (_clickedInteractable is IDraggable)
@@ -60,6 +61,7 @@ namespace Sdurlanik.Merge2.Managers
                    EventBus<InputDragPerformedEvent>.Publish(_reusableDragEvent);
                    
                    DetectDropZone((_clickedInteractable as MonoBehaviour).transform.position);
+                   HandleMergePreview();
                }
            }
    
@@ -86,6 +88,44 @@ namespace Sdurlanik.Merge2.Managers
            _isDragging = false;
            _clickedInteractable = null;
            _lastDetectedZone = null;
+           
+           if (_lastMergeableTarget != null)
+           {
+               ServiceLocator.Get<AnimationManager>().PlayMergePreviewShrinkAnimation(_lastMergeableTarget.transform);
+               _lastMergeableTarget = null;
+           }
+       }
+       
+       private void HandleMergePreview()
+       {
+           var draggedItem = _clickedInteractable as Item;
+           var targetItem = _lastDetectedZone?.GetComponent<Cell>()?.OccupiedItem;
+
+           if (draggedItem == null || targetItem == null)
+           {
+               if (_lastMergeableTarget != null)
+               {
+                   ServiceLocator.Get<AnimationManager>().PlayMergePreviewShrinkAnimation(_lastMergeableTarget.transform);
+                   _lastMergeableTarget = null;
+               }
+               return;
+           }
+
+           var canMerge = ItemActionService.CanMerge(draggedItem, targetItem, out _);
+
+           if (canMerge && draggedItem != targetItem && targetItem != _lastMergeableTarget)
+           {
+               if(_lastMergeableTarget != null)
+                   ServiceLocator.Get<AnimationManager>().PlayMergePreviewShrinkAnimation(_lastMergeableTarget.transform);
+        
+               ServiceLocator.Get<AnimationManager>().PlayMergePreviewGrowAnimation(targetItem.transform);
+               _lastMergeableTarget = targetItem;
+           }
+           else if ((!canMerge || draggedItem == targetItem) && _lastMergeableTarget != null)
+           {
+               ServiceLocator.Get<AnimationManager>().PlayMergePreviewShrinkAnimation(_lastMergeableTarget.transform);
+               _lastMergeableTarget = null;
+           }
        }
        
        private IInteractable GetInteractableAt(Vector2 position)

@@ -13,6 +13,7 @@ namespace Sdurlanik.Merge2.GridSystem
         public bool IsEmpty => OccupiedItem == null;
         public Vector2Int GridPos { get; private set; }
         
+        [SerializeField] private GameObject _orderHighlight;
 
         public void Init(Vector2Int gridPos)
         {
@@ -51,6 +52,14 @@ namespace Sdurlanik.Merge2.GridSystem
             ClearItem();
             
             EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
+        }
+        
+        public void SetHighlight(bool isActive)
+        {
+            if (_orderHighlight != null)
+            {
+                _orderHighlight.SetActive(isActive);
+            }
         }
     }
 }

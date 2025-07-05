@@ -3,7 +3,6 @@
     [System.Serializable]
     public class OrderRequirement
     {
-        public ItemSO RequiredItem; 
-        public int Amount;
+        public ItemSO RequiredItem;
     }
 }

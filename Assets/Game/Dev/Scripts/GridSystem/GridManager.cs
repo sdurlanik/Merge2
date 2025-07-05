@@ -14,7 +14,7 @@ namespace Sdurlanik.Merge2.GridSystem
         [SerializeField] private GridSettingsSO _gridSettings;
 
         private readonly List<Cell> _cells = new List<Cell>();
-
+        public IReadOnlyList<Cell> GetAllCells() => _cells;
 
         public void CreateGrid()
         {
@@ -74,20 +74,17 @@ namespace Sdurlanik.Merge2.GridSystem
         {
             foreach (var requirement in requirements)
             {
-                for (int i = 0; i < requirement.Amount; i++)
-                {
-                    Cell cellToConsume = _cells.FirstOrDefault(c => 
-                        !c.IsEmpty && c.OccupiedItem.ItemDataSO == requirement.RequiredItem);
+                var cellToConsume = _cells.FirstOrDefault(c => 
+                    !c.IsEmpty && c.OccupiedItem.ItemDataSO == requirement.RequiredItem);
 
-                    if (cellToConsume != null)
-                    {
-                        cellToConsume.ConsumeItemWithAnimation();
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Could not find required item: {requirement.RequiredItem.name} to consume for order.");
-                        break; 
-                    }
+                if (cellToConsume != null)
+                {
+                    cellToConsume.ConsumeItemWithAnimation();
+                }
+                else
+                {
+                    Debug.LogWarning($"Could not find required item: {requirement.RequiredItem.name} to consume for order.");
+                    break; 
                 }
             }
         }

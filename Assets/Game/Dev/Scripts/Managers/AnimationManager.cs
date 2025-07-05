@@ -118,6 +118,19 @@ namespace Sdurlanik.Merge2.Managers
                 .OnComplete(() => onComplete?.Invoke());
         }
         
+        public void PlayMergePreviewGrowAnimation(Transform target)
+        {
+            target.DOKill();
+            target.DOScale(Vector3.one * _itemAnimationSettings.MergePreviewScale, _itemAnimationSettings.MergePreviewDuration)
+                .SetEase(_itemAnimationSettings.MergePreviewEase);
+        }
+
+        public void PlayMergePreviewShrinkAnimation(Transform target)
+        {
+            target.DOKill();
+            target.DOScale(Vector3.one, _itemAnimationSettings.MergePreviewDuration)
+                .SetEase(_itemAnimationSettings.MergePreviewEase);
+        }
         #endregion
     }
 }

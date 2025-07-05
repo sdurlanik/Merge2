@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Sdurlanik.Merge2.Core;
+using Sdurlanik.Merge2.Managers;
 using UnityEngine;
 
 namespace Sdurlanik.Merge2.Data.Orders
@@ -16,6 +18,7 @@ namespace Sdurlanik.Merge2.Data.Orders
         public List<OrderRequirement> Requirements { get; }
         public int CalculatedReward { get; }
         public OrderStatus Status { get; private set; }
+        public Sprite AvatarSprite { get; private set; }
 
         private readonly Dictionary<ItemSO, int> _fulfilledAmount = new Dictionary<ItemSO, int>();
 
@@ -24,12 +27,13 @@ namespace Sdurlanik.Merge2.Data.Orders
             OrderData = orderData;
             Requirements = new List<OrderRequirement>(orderData.RequiredItems);
             Status = OrderStatus.Active;
+            AvatarSprite = ServiceLocator.Get<OrderManager>().GetRandomAvatarSprite();
             
             var totalLevel = 0;
             for (var index = 0; index < Requirements.Count; index++)
             {
                 var req = Requirements[index];
-                totalLevel += req.RequiredItem.Level * req.Amount;
+                totalLevel += req.RequiredItem.Level;
             }
 
             CalculatedReward = orderData.BaseCoinReward + Mathf.RoundToInt(totalLevel * orderData.CoinRewardPerLevelMultiplier);
@@ -47,7 +51,7 @@ namespace Sdurlanik.Merge2.Data.Orders
             var allRequirementsMet = true;
             foreach (var req in Requirements)
             {
-                if (!itemsOnBoard.TryGetValue(req.RequiredItem, out var countOnBoard) || countOnBoard < req.Amount)
+                if (!itemsOnBoard.TryGetValue(req.RequiredItem, out var countOnBoard) || countOnBoard < 1)
                 {
                     allRequirementsMet = false;
                     break;

@@ -12,9 +12,7 @@ namespace Sdurlanik.Merge2.Managers
 {
     public class OrderManager : MonoBehaviour
     {
-        [Header("Order Settings")]
-        [SerializeField] private int _maxActiveOrders = 3;
-
+        [SerializeField] private OrderSettingsSO _orderSettings;
         private readonly List<Order> _activeOrders = new();
         public IReadOnlyList<Order> ActiveOrders => _activeOrders;
 
@@ -57,7 +55,7 @@ namespace Sdurlanik.Merge2.Managers
         public void TryToGenerateNewOrders()
         {
             
-            while (_activeOrders.Count < _maxActiveOrders)
+            while (_activeOrders.Count < _orderSettings.MaxActiveOrders)
             {
                 var newOrder = OrderGeneratorService.GenerateOrder();
                 if (newOrder != null)
@@ -115,6 +113,13 @@ namespace Sdurlanik.Merge2.Managers
 
             CheckAllOrdersStatus();
             EventBus<ActiveOrdersUpdatedEvent>.Publish(new ActiveOrdersUpdatedEvent { ActiveOrders = _activeOrders });
+        }
+        
+        public Sprite GetRandomAvatarSprite()
+        {
+            var avatarList = _orderSettings.CustomerAvatars;
+            var randomIndex = Random.Range(0, avatarList.Count);
+            return avatarList[randomIndex];
         }
     }
 }

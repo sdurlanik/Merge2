@@ -1,6 +1,7 @@
 ﻿using System;
 using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Data;
+using Sdurlanik.Merge2.Events;
 using Sdurlanik.Merge2.GridSystem;
 using Sdurlanik.Merge2.Items;
 using Sdurlanik.Merge2.Managers;
@@ -32,6 +33,8 @@ namespace Sdurlanik.Merge2.Services
             cellB.ClearItem();
             cellA.PlaceItem(b);
             cellB.PlaceItem(a);
+            
+            EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
         }
 
         public static void Move(Item itemMono, Cell targetCell)
@@ -41,6 +44,7 @@ namespace Sdurlanik.Merge2.Services
 
             origin.ClearItem();
             targetCell.PlaceItem(itemMono);
+            EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
         }
 
         public static void Merge(Item a, Item b, ItemSO resultSO, Cell targetCell)

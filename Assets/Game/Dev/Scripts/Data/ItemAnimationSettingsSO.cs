@@ -16,5 +16,9 @@ namespace Sdurlanik.Merge2.Data
         public Ease AppearEase = Ease.OutBack;
         public float ConsumeDuration = 0.3f;
         public Ease ConsumeEase = Ease.InBack;
+        
+        public float MergePreviewScale = 1.2f; 
+        public float MergePreviewDuration = 0.2f;
+        public Ease MergePreviewEase = Ease.OutSine;
     }
 }

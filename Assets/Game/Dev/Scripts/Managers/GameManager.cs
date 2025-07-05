@@ -18,15 +18,17 @@ namespace Sdurlanik.Merge2.Managers
         [SerializeField] private DataBank _dataBank;
         [SerializeField] private ItemInteractionManager _itemInteractionManager;
         [SerializeField] private ObjectPooler _objectPooler;
-        [FormerlySerializedAs("_juiceManager")] [SerializeField] private AnimationManager _animationManager;
+        [SerializeField] private AnimationManager _animationManager;
+        [SerializeField] private OrderHighlightManager _orderHighlightManager;
         
         [SerializeField] private PoolSettingsSO _poolSettings;
         
         private void Awake()
         {
             ServiceLocator.Register(_animationManager);
-            ServiceLocator.Register(_gridManager);
+            ServiceLocator.Register(_orderHighlightManager);
             ServiceLocator.Register(_orderManager);
+            ServiceLocator.Register(_gridManager);
             ServiceLocator.Register(_currencyManager);
             ServiceLocator.Register(_dataBank);
             ServiceLocator.Register(_itemInteractionManager);
