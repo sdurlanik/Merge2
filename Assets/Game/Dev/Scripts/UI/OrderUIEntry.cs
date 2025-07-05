@@ -1,5 +1,6 @@
 ﻿// Konum: Sdurlanik.Merge2/Scripts/UI/OrderUIEntry.cs
 
+using System;
 using DG.Tweening;
 using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Data.Orders;
@@ -29,11 +30,17 @@ namespace Sdurlanik.Merge2.UI
 
         public Order CurrentOrder { get; private set; }
         private CanvasGroup _canvasGroup;
+        private AnimationManager _animationManager;
 
         private void Awake()
         {
             _canvasGroup = GetComponent<CanvasGroup>();
             _completeButton.onClick.AddListener(OnCompleteButtonPressed);
+        }
+
+        private void Start()
+        {
+            _animationManager = ServiceLocator.Get<AnimationManager>();
         }
 
         private void OnDisable()
@@ -43,15 +50,8 @@ namespace Sdurlanik.Merge2.UI
 
         public void InitializeAndAnimateIn(Order order, float delay)
         {
-            transform.DOKill();
             PopulateData(order);
-            gameObject.SetActive(true);
-            _canvasGroup.alpha = 0;
-            transform.localScale = Vector3.one * 0.8f;
-            DOTween.Sequence()
-                .SetDelay(delay)
-                .Append(transform.DOScale(Vector3.one, _animationDuration * 1.5f).SetEase(Ease.OutBack))
-                .Join(_canvasGroup.DOFade(1f, _animationDuration));
+            ServiceLocator.Get<AnimationManager>().PlayUIEntryInAnimation(transform, _canvasGroup, delay);
         }
 
         public void UpdateDisplay(Order order)
@@ -70,14 +70,10 @@ namespace Sdurlanik.Merge2.UI
         public void AnimateOutAndRepopulate(Order newOrder)
         {
             _completeButton.interactable = false;
-            transform.DOKill();
-            DOTween.Sequence()
-                .Append(transform.DOScale(Vector3.zero, _animationDuration).SetEase(Ease.InBack))
-                .Join(_canvasGroup.DOFade(0f, _animationDuration))
-                .OnComplete(() =>
-                {
-                    InitializeAndAnimateIn(newOrder, 0f);
-                });
+            _animationManager.PlayUIEntryOutAnimation(transform, _canvasGroup, () =>
+            {
+                InitializeAndAnimateIn(newOrder, 0f);
+            });
         }
         
         private void PopulateData(Order order)
@@ -105,7 +101,7 @@ namespace Sdurlanik.Merge2.UI
         
         private void AnimateReadyStatePop()
         {
-            transform.DOPunchScale(Vector3.one * (_popScale - 1f), 0.5f, 10, 1);
+            _animationManager.PlayUIReadyStateAnimation(transform);
         }
     }
 }

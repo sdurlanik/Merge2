@@ -154,6 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ordersContainer: {fileID: 1419530225}
   _orderEntryPrefab: {fileID: 5211826029974956429, guid: 3e69b87ae23c05e4d81e2bd5f04f3865, type: 3}
+  _maxOrdersToDisplay: 3
 --- !u!4 &67758644
 Transform:
   m_ObjectHideFlags: 0
@@ -308,6 +309,7 @@ MonoBehaviour:
   _dataBank: {fileID: 227394148}
   _itemInteractionManager: {fileID: 432668668}
   _objectPooler: {fileID: 884149718}
+  _juiceManager: {fileID: 609389176}
   _poolSettings: {fileID: 11400000, guid: 39e61f5947017b74991f2d94895dafd0, type: 2}
 --- !u!114 &432668671
 MonoBehaviour:
@@ -474,6 +476,66 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 525525011}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &609389175
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 609389177}
+  - component: {fileID: 609389176}
+  m_Layer: 0
+  m_Name: JuiceManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &609389176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 609389175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca5f513441c046ddbd30dd2685b2ea35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _uiPopScale: 1.1
+  _uiReadyVibrato: 10
+  _uiAnimationDuration: 0.3
+  _uiAppearEase: 27
+  _uiDisappearEase: 26
+  _uiReadyEase: 24
+  _itemMoveDuration: 0.25
+  _itemMoveEase: 6
+  _itemSnapBackDuration: 0.3
+  _itemSnapBackEase: 27
+  _itemMergeDuration: 0.2
+  _itemMergeEase: 26
+  _itemAppearDuration: 0.3
+  _itemAppearEase: 27
+  _itemConsumeDuration: 0.3
+  _itemConsumeEase: 26
+--- !u!4 &609389177
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 609389175}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -1020,3 +1082,4 @@ SceneRoots:
   - {fileID: 525525014}
   - {fileID: 67758644}
   - {fileID: 631302979}
+  - {fileID: 609389177}

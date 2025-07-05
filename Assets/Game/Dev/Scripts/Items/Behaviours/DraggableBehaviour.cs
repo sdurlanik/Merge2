@@ -1,6 +1,8 @@
 ﻿using DG.Tweening;
+using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Data;
 using Sdurlanik.Merge2.GridSystem;
+using Sdurlanik.Merge2.Managers;
 using UnityEngine;
 
 namespace Sdurlanik.Merge2.Items.Behaviours
@@ -68,7 +70,7 @@ namespace Sdurlanik.Merge2.Items.Behaviours
            if (!actionWasTaken)
            {
                _transform.SetParent(_originalParent);
-               _transform.DOLocalMove(Vector3.zero, 0.3f).SetEase(Ease.OutBack);
+               ServiceLocator.Get<AnimationManager>().PlayItemSnapBackAnimation(_transform);
            }
        }
    }

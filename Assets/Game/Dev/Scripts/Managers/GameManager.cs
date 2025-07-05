@@ -5,6 +5,7 @@ using Sdurlanik.Merge2.GridSystem;
 using Sdurlanik.Merge2.Items;
 using Sdurlanik.Merge2.Services;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Sdurlanik.Merge2.Managers
 {
@@ -17,11 +18,13 @@ namespace Sdurlanik.Merge2.Managers
         [SerializeField] private DataBank _dataBank;
         [SerializeField] private ItemInteractionManager _itemInteractionManager;
         [SerializeField] private ObjectPooler _objectPooler;
+        [FormerlySerializedAs("_juiceManager")] [SerializeField] private AnimationManager _animationManager;
         
         [SerializeField] private PoolSettingsSO _poolSettings;
         
         private void Awake()
         {
+            ServiceLocator.Register(_animationManager);
             ServiceLocator.Register(_gridManager);
             ServiceLocator.Register(_orderManager);
             ServiceLocator.Register(_currencyManager);

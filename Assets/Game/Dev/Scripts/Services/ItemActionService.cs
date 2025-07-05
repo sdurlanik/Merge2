@@ -3,6 +3,7 @@ using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Data;
 using Sdurlanik.Merge2.GridSystem;
 using Sdurlanik.Merge2.Items;
+using Sdurlanik.Merge2.Managers;
 
 namespace Sdurlanik.Merge2.Services
 {
@@ -42,37 +43,21 @@ namespace Sdurlanik.Merge2.Services
             targetCell.PlaceItem(itemMono);
         }
 
-        public static void Merge(Item firstItem, Item secondItem, ItemSO resultSO, Cell targetCell)
+        public static void Merge(Item a, Item b, ItemSO resultSO, Cell targetCell)
         {
-            var animationsCompleted = 0;
+            var juiceManager = ServiceLocator.Get<AnimationManager>();
+            var objectPooler = ServiceLocator.Get<ObjectPooler>();
 
-            var cellA = firstItem.CurrentCell;
-            var cellB = secondItem.CurrentCell;
+            Action onMergeAnimationComplete = () =>
+            {
+                objectPooler.ReturnObjectToPool(a.ItemDataSO.ItemPrefab.name, a.gameObject);
+                objectPooler.ReturnObjectToPool(b.ItemDataSO.ItemPrefab.name, b.gameObject);
+                ItemFactory.Create(resultSO, targetCell);
+            };
         
-            cellA.ClearItem();
-            cellB.ClearItem();
-
-            firstItem.AnimateMerge(targetCell.transform.position, () =>
-            {
-               ServiceLocator.Get<ObjectPooler>().ReturnObjectToPool(firstItem.ItemDataSO.ItemPrefab.name, firstItem.gameObject);
-                OnOneAnimationComplete();
-            });
-        
-            secondItem.AnimateMerge(targetCell.transform.position, () =>
-            {
-                ServiceLocator.Get<ObjectPooler>().ReturnObjectToPool(secondItem.ItemDataSO.ItemPrefab.name, secondItem.gameObject);
-                OnOneAnimationComplete();
-            });
-            return;
-
-            void OnOneAnimationComplete()
-            {
-                animationsCompleted++;
-                if (animationsCompleted == 2)
-                {
-                    ItemFactory.Create(resultSO, targetCell);
-                }
-            }
+            a.CurrentCell.ClearItem();
+            b.CurrentCell.ClearItem();
+            juiceManager.PlayTwoItemMergeAnimation(a, b, targetCell.transform.position, onMergeAnimationComplete);
         }
     }
 

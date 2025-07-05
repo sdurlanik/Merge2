@@ -3,6 +3,7 @@ using Sdurlanik.Merge2.Items;
 using Sdurlanik.Merge2.Data;
 using Sdurlanik.Merge2.Events;
 using Sdurlanik.Merge2.GridSystem;
+using Sdurlanik.Merge2.Managers;
 using UnityEngine;
 
 namespace Sdurlanik.Merge2.Services
@@ -21,7 +22,7 @@ namespace Sdurlanik.Merge2.Services
                 targetCell.PlaceItem(newItem);
                 newItemObject.SetActive(true);
                 
-                newItem.AnimateAppear();
+                ServiceLocator.Get<AnimationManager>().PlayItemAppearAnimation(newItem.transform);
                 EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
 
                 return newItem;

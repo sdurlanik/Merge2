@@ -1,6 +1,8 @@
-﻿using Sdurlanik.Merge2.Core;
+﻿using System;
+using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Events;
 using Sdurlanik.Merge2.Items;
+using Sdurlanik.Merge2.Managers;
 using UnityEngine;
 
 namespace Sdurlanik.Merge2.GridSystem
@@ -9,9 +11,9 @@ namespace Sdurlanik.Merge2.GridSystem
     {
         public Item OccupiedItem { get; private set; }
         public bool IsEmpty => OccupiedItem == null;
-        
         public Vector2Int GridPos { get; private set; }
         
+
         public void Init(Vector2Int gridPos)
         {
             GridPos = gridPos;
@@ -20,7 +22,7 @@ namespace Sdurlanik.Merge2.GridSystem
         {
             OccupiedItem = item;
             item.transform.SetParent(transform);
-            item.AnimateMoveTo(transform.position); 
+            ServiceLocator.Get<AnimationManager>().PlayItemMoveAnimation(item.transform, transform.position);
             item.SetCurrentCell(this);
         }
 
@@ -44,7 +46,7 @@ namespace Sdurlanik.Merge2.GridSystem
         {
             if (IsEmpty) return;
 
-            OccupiedItem.AnimateConsumption();
+            ServiceLocator.Get<AnimationManager>().PlayItemConsumptionAnimation(OccupiedItem);
             
             ClearItem();
             

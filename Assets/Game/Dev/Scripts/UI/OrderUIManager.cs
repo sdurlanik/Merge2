@@ -51,9 +51,9 @@ namespace Sdurlanik.Merge2.UI
             
             var removedOrder = oldOrders.Except(newOrders).FirstOrDefault();
 
-            for (var ındex = 0; ındex < _uiEntries.Count; ındex++)
+            for (var i = 0; i < _uiEntries.Count; i++)
             {
-                var uiEntry = _uiEntries[ındex];
+                var uiEntry = _uiEntries[i];
                 if (uiEntry.CurrentOrder != null && uiEntry.CurrentOrder != removedOrder)
                 {
                     uiEntry.UpdateDisplay(uiEntry.CurrentOrder);
