@@ -47,16 +47,19 @@ namespace Sdurlanik.Merge2.Services
             EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
         }
 
-        public static void Merge(Item a, Item b, ItemSO resultSO, Cell targetCell)
+        public static void Merge(Item a, Item b, ItemSO resultSO, Cell targetCell, Action onMergeComplete = null)
         {
             var juiceManager = ServiceLocator.Get<AnimationManager>();
             var objectPooler = ServiceLocator.Get<ObjectPooler>();
+            var gridManager = ServiceLocator.Get<GridManager>();
 
             Action onMergeAnimationComplete = () =>
             {
                 objectPooler.ReturnObjectToPool(a.ItemDataSO.ItemPrefab.name, a.gameObject);
                 objectPooler.ReturnObjectToPool(b.ItemDataSO.ItemPrefab.name, b.gameObject);
                 ItemFactory.Create(resultSO, targetCell);
+                gridManager.RevealNeighborsOf(targetCell);
+                onMergeComplete?.Invoke();
             };
         
             a.CurrentCell.ClearItem();

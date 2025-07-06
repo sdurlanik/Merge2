@@ -31,16 +31,18 @@ namespace Sdurlanik.Merge2.Managers
        private void Update()
        {
            var mousePosition = (Vector2)_mainCamera.ScreenToWorldPoint(Input.mousePosition);
-   
+
            if (Input.GetMouseButtonDown(0))
            {
-               _clickedInteractable = GetInteractableAt(mousePosition);
-               if (_clickedInteractable != null)
+               IInteractable interactable = GetInteractableAt(mousePosition);
+
+               if (interactable is Item clickedItem && clickedItem.CurrentCell.CurrentState == Cell.Unlocked)
                {
+                   _clickedInteractable = clickedItem;
                    _startMousePosition = mousePosition;
                }
            }
-           
+    
            if (Input.GetMouseButton(0))
            {
                if (_clickedInteractable != null && !_isDragging)
@@ -54,17 +56,16 @@ namespace Sdurlanik.Merge2.Managers
                        }
                    }
                }
-               
+        
                if (_isDragging)
                {
                    _reusableDragEvent.MousePosition = mousePosition; 
                    EventBus<InputDragPerformedEvent>.Publish(_reusableDragEvent);
-                   
                    DetectDropZone((_clickedInteractable as MonoBehaviour).transform.position);
-                   HandleMergePreview();
+            
                }
            }
-   
+
            if (Input.GetMouseButtonUp(0))
            {
                if (_isDragging)
@@ -78,7 +79,7 @@ namespace Sdurlanik.Merge2.Managers
                        EventBus<ItemTappedEvent>.Publish(new ItemTappedEvent { TappedItem = (Item)_clickedInteractable });
                    }
                }
-               
+        
                ResetInteractionState();
            }
        }

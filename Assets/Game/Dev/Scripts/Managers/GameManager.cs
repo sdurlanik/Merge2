@@ -22,6 +22,7 @@ namespace Sdurlanik.Merge2.Managers
         [SerializeField] private OrderHighlightManager _orderHighlightManager;
         
         [SerializeField] private PoolSettingsSO _poolSettings;
+        [FormerlySerializedAs("_currentLevelDesign")] [SerializeField] private LevelDesignSettingsSO _currentLevelDesignSettings;
         
         private void Awake()
         {
@@ -88,7 +89,7 @@ namespace Sdurlanik.Merge2.Managers
             }
             else
             {
-                BoardSetupService.SetupInitialBoard();
+                BoardSetupService.SetupInitialBoard(_currentLevelDesignSettings);
                 ServiceLocator.Get<OrderManager>().TryToGenerateNewOrders();
             }
         }

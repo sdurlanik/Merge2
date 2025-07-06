@@ -21,10 +21,7 @@ namespace Sdurlanik.Merge2.GridSystem
 
         public bool HandleDrop(Item sourceItem)
         {
-            var sourceCell = sourceItem.CurrentCell;
-            if (sourceCell == _targetCell) return false;
-
-            return _rootHandler.Handle(sourceItem, _targetCell);
+            return _targetCell.OnItemDropped(sourceItem);
         }
 
         public void NotifyHoverEnter()

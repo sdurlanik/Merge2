@@ -312,6 +312,7 @@ MonoBehaviour:
   _animationManager: {fileID: 609389176}
   _orderHighlightManager: {fileID: 973417021}
   _poolSettings: {fileID: 11400000, guid: 39e61f5947017b74991f2d94895dafd0, type: 2}
+  _currentLevelDesignSettings: {fileID: 11400000, guid: 79dd55336fe3e0f44a7bb993df8834cc, type: 2}
 --- !u!114 &432668671
 MonoBehaviour:
   m_ObjectHideFlags: 0

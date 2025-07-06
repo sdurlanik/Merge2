@@ -57,9 +57,11 @@ namespace Sdurlanik.Merge2.Managers
             var allCells = gridManager.GetAllCells();
             foreach (var cell in allCells)
             {
-                var shouldHighlight = !cell.IsEmpty &&
-                                      requiredItemsForCompletableOrders.Contains(cell.OccupiedItem.ItemDataSO);
-
+                var shouldHighlight = 
+                    !cell.IsEmpty && 
+                    cell.CurrentState == Cell.Unlocked &&
+                    requiredItemsForCompletableOrders.Contains(cell.OccupiedItem.ItemDataSO);
+                
                 cell.SetHighlight(shouldHighlight);
             }
         }

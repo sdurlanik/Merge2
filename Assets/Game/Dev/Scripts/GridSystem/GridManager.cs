@@ -31,7 +31,7 @@ namespace Sdurlanik.Merge2.GridSystem
     
         public bool TryGetEmptyCell(out Cell emptyCell)
         {
-            emptyCell = _cells.Find(c => c.IsEmpty);
+            emptyCell = _cells.Find(c => c.CurrentState == Cell.Unlocked && c.IsEmpty);
             return emptyCell != null;
         }
         
@@ -54,10 +54,10 @@ namespace Sdurlanik.Merge2.GridSystem
         public Dictionary<ItemSO, int> GetCurrentItemCountsOnBoard()
         {
             var itemCounts = new Dictionary<ItemSO, int>();
-            for (var index = 0; index < _cells.Count; index++)
+            for (var i = 0; i < _cells.Count; i++)
             {
-                var cell = _cells[index];
-                if (!cell.IsEmpty)
+                var cell = _cells[i];
+                if (!cell.IsEmpty && cell.CurrentState == Cell.Unlocked)
                 {
                     var itemSO = cell.OccupiedItem.ItemDataSO;
                     if (!itemCounts.TryAdd(itemSO, 1))
@@ -75,7 +75,9 @@ namespace Sdurlanik.Merge2.GridSystem
             foreach (var requirement in requirements)
             {
                 var cellToConsume = _cells.FirstOrDefault(c => 
-                    !c.IsEmpty && c.OccupiedItem.ItemDataSO == requirement.RequiredItem);
+                    !c.IsEmpty && 
+                    c.CurrentState == Cell.Unlocked &&
+                    c.OccupiedItem.ItemDataSO == requirement.RequiredItem);
 
                 if (cellToConsume != null)
                 {
@@ -124,9 +126,42 @@ namespace Sdurlanik.Merge2.GridSystem
             }
         }
         
-        private Cell GetCellAt(Vector2Int gridPos)
+        public Cell GetCellAt(Vector2Int gridPos)
         {
             return _cells.FirstOrDefault(c => c.GridPos == gridPos);
+        }
+
+        private List<Cell> GetNeighbors(Cell cell)
+        {
+            var neighbors = new List<Cell>();
+            var pos = cell.GridPos;
+
+            int[] dx = { 0, 0, 1, -1 };
+            int[] dy = { 1, -1, 0, 0 };
+
+            for (int i = 0; i < 4; i++)
+            {
+                var neighborPos = new Vector2Int(pos.x + dx[i], pos.y + dy[i]);
+
+                if (neighborPos.x >= 0 && neighborPos.x < _gridSettings.Size && neighborPos.y >= 0 && neighborPos.y < _gridSettings.Size)
+                {
+                    neighbors.Add(GetCellAt(neighborPos));
+                }
+            }
+
+            return neighbors;
+        }
+
+        public void RevealNeighborsOf(Cell cell)
+        {
+            var neighbors = GetNeighbors(cell);
+            foreach(var neighbor in neighbors)
+            {
+                if (neighbor.CurrentState == Cell.LockedHidden)
+                {
+                    neighbor.TransitionTo(neighbor.IsEmpty ? Cell.Unlocked : Cell.LockedRevealed);
+                }
+            }
         }
     }
 }
