@@ -28,6 +28,12 @@ MonoBehaviour:
     ItemToPlace: {fileID: 11400000, guid: c64e6a4b10f74634eb681e99ec8ef597, type: 2}
   - GridPosition: {x: 3, y: 3}
     ItemToPlace: {fileID: 11400000, guid: 1f0e70005679a3941a48f5a065c07f74, type: 2}
+  - GridPosition: {x: 4, y: 4}
+    ItemToPlace: {fileID: 11400000, guid: ec1ddae5bd1db164d9c1bcc7cc41f731, type: 2}
+  - GridPosition: {x: 4, y: 0}
+    ItemToPlace: {fileID: 11400000, guid: 3cb7fa734c7decc48ae3f321d5d43986, type: 2}
+  - GridPosition: {x: 0, y: 4}
+    ItemToPlace: {fileID: 11400000, guid: 609666c917ca9664faa6b5ee2c1c9ed8, type: 2}
   ProceduralItemPool:
   - {fileID: 11400000, guid: 09ba11965825c8a4e9ffdc35c1e0d54d, type: 2}
   - {fileID: 11400000, guid: ad16b323b4118dd46a05714da30b6ac7, type: 2}
