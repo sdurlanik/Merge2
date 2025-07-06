@@ -12,11 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6065aa0350264fa0867178a9d1b1c646, type: 3}
   m_Name: Order_1
   m_EditorClassIdentifier: 
-  OrderName: First
+  OrderName: 1
   RequiredItems:
   - RequiredItem: {fileID: 11400000, guid: 5d9f0ceb1ece4a24eb34511907bb9fdd, type: 2}
-    Amount: 1
   BaseCoinReward: 10
   CoinRewardPerLevelMultiplier: 1.2
-  RequiredGeneratorMinLevel: 4
+  RequiredGeneratorMinLevel: 1
   RequiredGeneratorMaxLevel: 10

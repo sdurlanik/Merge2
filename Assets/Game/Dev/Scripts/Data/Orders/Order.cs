@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Managers;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace Sdurlanik.Merge2.Data.Orders
 
     public class Order
     {
+        public Guid Id { get; }
         public OrderDataSO OrderData { get; }
         public List<OrderRequirement> Requirements { get; }
         public int CalculatedReward { get; }
@@ -24,6 +26,7 @@ namespace Sdurlanik.Merge2.Data.Orders
 
         public Order(OrderDataSO orderData)
         {
+            Id = Guid.NewGuid();
             OrderData = orderData;
             Requirements = new List<OrderRequirement>(orderData.RequiredItems);
             Status = OrderStatus.Active;

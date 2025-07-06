@@ -22,7 +22,7 @@ namespace Sdurlanik.Merge2.Managers
         [SerializeField] private OrderHighlightManager _orderHighlightManager;
         
         [SerializeField] private PoolSettingsSO _poolSettings;
-        [FormerlySerializedAs("_currentLevelDesign")] [SerializeField] private LevelDesignSettingsSO _currentLevelDesignSettings;
+        [SerializeField] private LevelDesignSettingsSO _currentLevelDesignSettings;
         
         private void Awake()
         {
@@ -79,22 +79,25 @@ namespace Sdurlanik.Merge2.Managers
         
         private void LoadGameState()
         {
-            Debug.Log("Loading game state...");
             var data = SaveLoadService.LoadGame();
-            
+            var gridManager = ServiceLocator.Get<GridManager>();
+            var orderManager = ServiceLocator.Get<OrderManager>();
+
+            gridManager.CreateGrid();
             ServiceLocator.Get<CurrencyManager>().LoadCurrency(data.Coins);
-            ServiceLocator.Get<GridManager>().CreateGrid();
             
-            if (data.CellStates.Count > 0)
+            if (data != null && data.CellStates.Count > 0)
             {
-                ServiceLocator.Get<GridManager>().LoadItemsFromSave(data.GridItems, data.CellStates);
-                ServiceLocator.Get<OrderManager>().LoadOrdersFromSave(data.ActiveOrderSONames);
+                gridManager.LoadItemsFromSave(data.GridItems, data.CellStates);
+                orderManager.LoadOrdersFromSave(data.ActiveOrderSONames);
             }
             else 
             {
                 BoardSetupService.SetupInitialBoard(_currentLevelDesignSettings);
-                ServiceLocator.Get<OrderManager>().TryToGenerateNewOrders();
+                orderManager.TryToGenerateNewOrders();
             }
+
+            orderManager.CheckAllOrdersStatus(true);
         }
     }
 }

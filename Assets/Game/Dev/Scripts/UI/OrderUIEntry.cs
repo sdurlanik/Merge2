@@ -2,6 +2,7 @@
 using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Data.Orders;
 using Sdurlanik.Merge2.Managers;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,6 +23,7 @@ namespace Sdurlanik.Merge2.UI
         
         public Order CurrentOrder { get; private set; }
         private CanvasGroup _canvasGroup;
+        private Sequence _currentSequence;
         private OrderStatus _lastKnownStatus;
 
         private void Awake()
@@ -30,50 +32,90 @@ namespace Sdurlanik.Merge2.UI
             _completeButton.onClick.AddListener(OnCompleteButtonPressed);
         }
 
-        public void InitializeAndAnimateIn(Order order, float delay)
+        private void OnDisable()
         {
+            _currentSequence?.Kill();
+            transform.DOKill();
+        }
+
+        public void SetData(Order newOrder, int index)
+        {
+            _currentSequence?.Kill();
+
+            if (CurrentOrder != null && CurrentOrder.Id == newOrder.Id)
+            {
+                CurrentOrder = newOrder; 
+                UpdateDisplayStateOnly();
+                return;
+            }
+            
+            if (gameObject.activeSelf && CurrentOrder != null)
+            {
+                AnimateOutAndRepopulate(newOrder, index); 
+            }
+            else
+            {
+                InitializeAndAnimateIn(newOrder, index);
+            }
+        }
+
+        private void InitializeAndAnimateIn(Order order, int index)
+        {
+            gameObject.SetActive(true);
             PopulateData(order);
+            var delay = index * 0.1f;
             ServiceLocator.Get<AnimationManager>().PlayUIEntryInAnimation(transform, _canvasGroup, delay);
         }
 
-        public void UpdateDisplay(Order order)
+        private void AnimateOutAndRepopulate(Order newOrder, int index)
         {
-            
-            var isNowReady = order.Status == OrderStatus.ReadyToComplete;
-            if (isNowReady && _lastKnownStatus  != OrderStatus.ReadyToComplete)
+            _completeButton.gameObject.SetActive(false);
+
+            ServiceLocator.Get<AnimationManager>().PlayUIEntryOutAnimation(transform, _canvasGroup, OnOutComplete);
+            return;
+
+            void OnOutComplete()
             {
-                Debug.Log("Order is now ready to complete: " + order.OrderData.OrderName);
-                AnimateReadyStatePop();
+                InitializeAndAnimateIn(newOrder, index);
             }
-            
-            PopulateData(order);
         }
-        
-        public void AnimateOut(System.Action onComplete = null)
-        {
-            ServiceLocator.Get<AnimationManager>().PlayUIEntryOutAnimation(transform, _canvasGroup, () =>
-            {
-                gameObject.SetActive(false);
-                CurrentOrder = null;
-                onComplete?.Invoke();
-            });
-        }
-        
+
         private void PopulateData(Order order)
         {
+            _lastKnownStatus = CurrentOrder?.Status ?? OrderStatus.Completed;
             CurrentOrder = order;
-            _rewardText.text = CurrentOrder.CalculatedReward.ToString();
-            _avatarImage.sprite = CurrentOrder.AvatarSprite;
+
+            _rewardText.text = order.CalculatedReward.ToString();
+            if (order.AvatarSprite != null) _avatarImage.sprite = order.AvatarSprite;
+
             foreach (Transform child in _requirementsContainer) Destroy(child.gameObject);
-            foreach (var requirement in CurrentOrder.Requirements)
+            foreach (var requirement in order.Requirements)
             {
                 var iconInstance = Instantiate(_requirementIconPrefab, _requirementsContainer);
                 iconInstance.SetRequirement(requirement.RequiredItem);
             }
+            UpdateDisplayStateOnly();
+        }
+        
+        private void UpdateDisplayStateOnly()
+        {
+            if (CurrentOrder == null) return;
 
-            var isActive = CurrentOrder.Status == OrderStatus.ReadyToComplete;
-            _completeButton.gameObject.SetActive(isActive);
+            var isNowReady = CurrentOrder.Status == OrderStatus.ReadyToComplete;
+            if (isNowReady && _lastKnownStatus != OrderStatus.ReadyToComplete)
+            {
+                ServiceLocator.Get<AnimationManager>().PlayUIReadyStateAnimation(transform);
+            }
+            _completeButton.gameObject.SetActive(isNowReady);
+            
             _lastKnownStatus = CurrentOrder.Status;
+        }
+
+        public void Hide()
+        {
+            _currentSequence?.Kill();
+            gameObject.SetActive(false);
+            CurrentOrder = null;
         }
 
         private void OnCompleteButtonPressed()
@@ -83,12 +125,6 @@ namespace Sdurlanik.Merge2.UI
                 _completeButton.gameObject.SetActive(false);
                 ServiceLocator.Get<OrderManager>().CompleteOrder(CurrentOrder);
             }
-        }
-        
-        private void AnimateReadyStatePop()
-        {
-            ServiceLocator.Get<AnimationManager>().PlayUIReadyStateAnimation(transform);
-            
         }
     }
 }

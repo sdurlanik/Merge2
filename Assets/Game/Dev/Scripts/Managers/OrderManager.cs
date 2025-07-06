@@ -31,7 +31,7 @@ namespace Sdurlanik.Merge2.Managers
             CheckAllOrdersStatus();
         }
 
-        private void CheckAllOrdersStatus()
+        public void CheckAllOrdersStatus(bool forcePublish = false)
         {
             var itemsOnBoard = ServiceLocator.Get<GridManager>().GetCurrentItemCountsOnBoard();
             var statusChanged = false;
@@ -46,7 +46,7 @@ namespace Sdurlanik.Merge2.Managers
                 }
             }
             
-            if (statusChanged)
+            if (statusChanged || forcePublish)
             {
                 EventBus<ActiveOrdersUpdatedEvent>.Publish(new ActiveOrdersUpdatedEvent { ActiveOrders = _activeOrders });
             }
@@ -68,9 +68,6 @@ namespace Sdurlanik.Merge2.Managers
                     break;
                 }
             }
-            
-            CheckAllOrdersStatus();
-            EventBus<ActiveOrdersUpdatedEvent>.Publish(new ActiveOrdersUpdatedEvent { ActiveOrders = _activeOrders });
         }
 
         public void CompleteOrder(Order orderToComplete)
@@ -91,6 +88,8 @@ namespace Sdurlanik.Merge2.Managers
             Debug.Log($"Order completed: {orderToComplete.OrderData.OrderName}. Reward: {orderToComplete.CalculatedReward}x coin.");
 
             TryToGenerateNewOrders();
+    
+            CheckAllOrdersStatus(forcePublish: true);
         }
         
         public List<string> GetOrdersForSaving()

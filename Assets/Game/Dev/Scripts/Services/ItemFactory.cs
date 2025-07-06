@@ -10,21 +10,32 @@ namespace Sdurlanik.Merge2.Services
 {
     public static class ItemFactory
     {
-            public static Item Create(ItemSO so, Cell targetCell)
-            {
-                var newItemObject = ServiceLocator.Get<ObjectPooler>().GetObjectFromPool(so.ItemPrefab.name);
-                if (newItemObject == null) return null;
+        public static Item Create(ItemSO so, Cell targetCell, bool animate = true, bool publishEvents = true)
+        {
+            var newItemObject = ServiceLocator.Get<ObjectPooler>().GetObjectFromPool(so.ItemPrefab.name);
+            if (newItemObject == null) return null;
 
-                var newItem = newItemObject.GetComponent<Item>();
+            var newItem = newItemObject.GetComponent<Item>();
+            newItem.Init(so);
+            targetCell.PlaceItem(newItem);
             
-                newItem.Init(so);
-        
-                targetCell.PlaceItem(newItem);
-                ServiceLocator.Get<AnimationManager>().PlayItemAppearAnimation(newItem.transform);
-        
-                EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
 
-                return newItem;
+            if (animate)
+            {
+                ServiceLocator.Get<AnimationManager>().PlayItemAppearAnimation(newItem.transform);
             }
+            else
+            {
+                newItem.gameObject.SetActive(true);
+                newItem.GetComponent<SpriteRenderer>().color = Color.white;
+            }
+
+            if (publishEvents)
+            {
+                EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
+            }
+
+            return newItem;
+        }
     }
 }

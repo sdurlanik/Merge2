@@ -21,7 +21,7 @@ namespace Sdurlanik.Merge2.Managers
 
         private void OnDisable()
         {
-            EventBus<BoardStateChangedEvent>.OnEvent += HandleBoardStateChanged;
+            EventBus<BoardStateChangedEvent>.OnEvent -= HandleBoardStateChanged;
             EventBus<ActiveOrdersUpdatedEvent>.OnEvent -= HandleOrdersUpdated;
         }
 

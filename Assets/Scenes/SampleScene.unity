@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ordersContainer: {fileID: 1419530225}
   _orderEntryPrefab: {fileID: 5211826029974956429, guid: 3e69b87ae23c05e4d81e2bd5f04f3865, type: 3}
-  _maxOrdersToDisplay: 3
+  _orderSettings: {fileID: 11400000, guid: 6b58199395f239441b52633f7b9d7aaf, type: 2}
 --- !u!4 &67758644
 Transform:
   m_ObjectHideFlags: 0
@@ -229,6 +229,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8c1c17573a8f37440b2785ad82d3a09c, type: 2}
   - {fileID: 11400000, guid: bc0baf757397e5043acde91e09cfc122, type: 2}
   - {fileID: 11400000, guid: ce38468c38addfc469c142516c23e6fe, type: 2}
+  - {fileID: 11400000, guid: 437da1dfc120b3348a044092013f6427, type: 2}
+  - {fileID: 11400000, guid: d8865cd233c41c4438dcc99c4d5902d4, type: 2}
+  - {fileID: 11400000, guid: 0220ba20a67036b49b9724cdd712e9c9, type: 2}
+  - {fileID: 11400000, guid: 97db749f461655c4680f0c5feca74e16, type: 2}
+  - {fileID: 11400000, guid: 45060ee0d1ae6a249a9332ebae7a29db, type: 2}
 --- !u!4 &227394149
 Transform:
   m_ObjectHideFlags: 0

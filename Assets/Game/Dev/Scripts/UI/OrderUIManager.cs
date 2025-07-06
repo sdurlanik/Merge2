@@ -1,10 +1,10 @@
-﻿// Konum: Sdurlanik.Merge2/Scripts/UI/OrderUIManager.cs
-
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Data.Orders;
 using Sdurlanik.Merge2.Events;
+using Sdurlanik.Merge2.Managers;
 using UnityEngine;
 
 namespace Sdurlanik.Merge2.UI
@@ -13,13 +13,13 @@ namespace Sdurlanik.Merge2.UI
     {
         [SerializeField] private Transform _ordersContainer;
         [SerializeField] private OrderUIEntry _orderEntryPrefab;
-        [SerializeField] private int _maxOrdersToDisplay = 3;
 
+        [SerializeField] private OrderSettingsSO _orderSettings;
         private readonly List<OrderUIEntry> _uiEntries = new();
 
         private void Awake()
         {
-            for (int i = 0; i < _maxOrdersToDisplay; i++)
+            for (int i = 0; i < _orderSettings.MaxActiveOrders; i++)
             {
                 var entry = Instantiate(_orderEntryPrefab, _ordersContainer);
                 entry.gameObject.SetActive(false);
@@ -32,6 +32,15 @@ namespace Sdurlanik.Merge2.UI
             EventBus<ActiveOrdersUpdatedEvent>.OnEvent += HandleActiveOrdersUpdated;
         }
 
+        private void Start()
+        {
+            var orderManager = ServiceLocator.Get<OrderManager>();
+            if (orderManager != null)
+            {
+                HandleActiveOrdersUpdated(new ActiveOrdersUpdatedEvent { ActiveOrders = orderManager.ActiveOrders });
+            }
+        }
+
         private void OnDisable()
         {
             EventBus<ActiveOrdersUpdatedEvent>.OnEvent -= HandleActiveOrdersUpdated;
@@ -39,41 +48,53 @@ namespace Sdurlanik.Merge2.UI
 
         private void HandleActiveOrdersUpdated(ActiveOrdersUpdatedEvent e)
         {
-            var newOrders = e.ActiveOrders.ToList();
+            var newOrders = e.ActiveOrders;
+            var newOrderIds = new HashSet<Guid>(newOrders.Select(o => o.Id));
 
-            var survivingEntries = new List<OrderUIEntry>();
-            foreach (var newOrder in newOrders)
+            var ordersThatNeedASlot = new Queue<Order>(newOrders);
+
+            var availableSlots = new Queue<OrderUIEntry>();
+
+            foreach (var uiEntry in _uiEntries)
             {
-                var existingEntry = _uiEntries.FirstOrDefault(ui => ui.CurrentOrder == newOrder);
-                if (existingEntry != null)
+                if (uiEntry.CurrentOrder != null)
                 {
-                    existingEntry.UpdateDisplay(newOrder);
-                    survivingEntries.Add(existingEntry);
-                }
-            }
-
-            var entryToAnimateOut = _uiEntries.FirstOrDefault(ui => 
-                ui.gameObject.activeSelf && !newOrders.Contains(ui.CurrentOrder));
-            
-            var addedOrder = newOrders.FirstOrDefault(o => _uiEntries.All(ui => ui.CurrentOrder != o));
-
-            if (entryToAnimateOut != null)
-            {
-                entryToAnimateOut.AnimateOut(() =>
-                {
-                    if (addedOrder != null)
+                    if (newOrderIds.Contains(uiEntry.CurrentOrder.Id))
                     {
-                        entryToAnimateOut.InitializeAndAnimateIn(addedOrder, 0.1f);
+                        var updatedOrderData = newOrders.First(o => o.Id == uiEntry.CurrentOrder.Id);
+                        uiEntry.SetData(updatedOrderData, _uiEntries.IndexOf(uiEntry));
+
+                        ordersThatNeedASlot =
+                            new Queue<Order>(ordersThatNeedASlot.Where(o => o.Id != uiEntry.CurrentOrder.Id));
                     }
-                });
-            }
-            else if (addedOrder != null)
-            {
-                var availableEntry = _uiEntries.FirstOrDefault(ui => !ui.gameObject.activeSelf);
-                if (availableEntry != null)
-                {
-                    availableEntry.InitializeAndAnimateIn(addedOrder, 0.1f);
+                    else
+                    {
+                        availableSlots.Enqueue(uiEntry);
+                    }
                 }
+                else
+                {
+                    availableSlots.Enqueue(uiEntry);
+                }
+            }
+
+            while (ordersThatNeedASlot.Count > 0)
+            {
+                if (availableSlots.Count > 0)
+                {
+                    var slot = availableSlots.Dequeue();
+                    var orderToDisplay = ordersThatNeedASlot.Dequeue();
+                    slot.SetData(orderToDisplay, _uiEntries.IndexOf(slot));
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            foreach (var slot in availableSlots)
+            {
+                slot.Hide();
             }
         }
     }

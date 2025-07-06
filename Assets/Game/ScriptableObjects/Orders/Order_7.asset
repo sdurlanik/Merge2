@@ -10,12 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6065aa0350264fa0867178a9d1b1c646, type: 3}
-  m_Name: Order_3
+  m_Name: Order_7
   m_EditorClassIdentifier: 
-  OrderName: 3
+  OrderName: 7
   RequiredItems:
-  - RequiredItem: {fileID: 11400000, guid: ad16b323b4118dd46a05714da30b6ac7, type: 2}
-  - RequiredItem: {fileID: 11400000, guid: 5d9f0ceb1ece4a24eb34511907bb9fdd, type: 2}
+  - RequiredItem: {fileID: 11400000, guid: a9da56ba64bf38d43be67aa7d8078c35, type: 2}
   BaseCoinReward: 30
   CoinRewardPerLevelMultiplier: 1.5
   RequiredGeneratorMinLevel: 1
