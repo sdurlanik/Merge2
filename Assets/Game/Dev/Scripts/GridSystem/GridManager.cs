@@ -146,7 +146,7 @@ namespace Sdurlanik.Merge2.GridSystem
             foreach (var itemData in savedItems)
             {
                 var cell = GetCellAt(itemData.CellGridPosition);
-                var itemSO = ServiceLocator.Get<DataBank>().GetSOByName(itemData.ItemSOName);
+                var itemSO = ServiceLocator.Get<DataManager>().GetSOByName(itemData.ItemSOName);
                 if (cell != null && itemSO != null && cell.IsEmpty)
                 {
                     //TODO: first load maybe should create item without animation?

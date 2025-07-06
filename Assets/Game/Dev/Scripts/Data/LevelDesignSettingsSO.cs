@@ -10,11 +10,13 @@ namespace Sdurlanik.Merge2.Data
         public ItemSO ItemToPlace;
     }
 
-    [CreateAssetMenu(fileName = "Level01_Design", menuName = "Merge2/Settings/Level Design")]
+    [CreateAssetMenu(fileName = "Level_Design", menuName = "Merge2/Settings/Level Design Settings")]
     public class LevelDesignSettingsSO : ScriptableObject
     {
         public List<Vector2Int> InitiallyUnlockedCells;
 
-        public List<InitialItemPlacement> InitialItems;
+        public List<InitialItemPlacement> ManualItemPlacements;
+
+        public List<ItemSO> ProceduralItemPool;
     }
 }

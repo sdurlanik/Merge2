@@ -103,7 +103,7 @@ namespace Sdurlanik.Merge2.Managers
     
             foreach (var soName in savedOrderNames)
             {
-                var orderSO = ServiceLocator.Get<DataBank>().AllOrderTemplates.Find(so => so.name == soName);
+                var orderSO = ServiceLocator.Get<DataManager>().AllOrderTemplates.Find(so => so.name == soName);
                 if (orderSO != null)
                 {
                     _activeOrders.Add(new Order(orderSO));

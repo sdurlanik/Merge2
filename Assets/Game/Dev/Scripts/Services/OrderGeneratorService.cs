@@ -13,7 +13,7 @@ namespace Sdurlanik.Merge2.Services
         {
             var maxGeneratorLevel = ServiceLocator.Get<GridManager>().GetHighestGeneratorLevelOnBoard();
             
-            var allTemplates = ServiceLocator.Get<DataBank>().AllOrderTemplates;
+            var allTemplates = ServiceLocator.Get<DataManager>().AllOrderTemplates;
             if (allTemplates == null || allTemplates.Count == 0)
             {
                 Debug.LogError("There are no order templates exist in the DataBank.");

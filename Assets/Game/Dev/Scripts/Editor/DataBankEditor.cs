@@ -7,7 +7,7 @@ using Sdurlanik.Merge2.Editor.Helpers;
 namespace Sdurlanik.Merge2.Editor
 {
 
-    [CustomEditor(typeof(DataBank))]
+    [CustomEditor(typeof(DataManager))]
     public class DataBankEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
@@ -23,23 +23,23 @@ namespace Sdurlanik.Merge2.Editor
             EditorGUILayout.LabelField("Auto-Fill Editor", EditorStyles.boldLabel);
             EditorGUILayout.Space(5);
 
-            var dataBank = (DataBank)target;
+            var dataBank = (DataManager)target;
             if (GUILayout.Button("Find & Add All ItemSOs In Project", GUILayout.Height(40)))
             {
                 PopulateAllItems(dataBank);
             }
         }
 
-        private void PopulateAllItems(DataBank dataBank)
+        private void PopulateAllItems(DataManager dataManager)
         {
-            Undo.RecordObject(dataBank, "Populate ItemSO List");
+            Undo.RecordObject(dataManager, "Populate ItemSO List");
 
-            dataBank.AllItems = EditorAssetHelper.FindAllAssetsOfType<ItemSO>();
+            dataManager.AllItems = EditorAssetHelper.FindAllAssetsOfType<ItemSO>();
         
-            dataBank.AllItems = dataBank.AllItems.OrderBy(item => item.Family).ThenBy(item => item.Level).ToList();
+            dataManager.AllItems = dataManager.AllItems.OrderBy(item => item.Family).ThenBy(item => item.Level).ToList();
 
-            EditorUtility.SetDirty(dataBank);
-            Debug.Log($"DataBank populated with {dataBank.AllItems.Count} ItemSOs.");
+            EditorUtility.SetDirty(dataManager);
+            Debug.Log($"DataBank populated with {dataManager.AllItems.Count} ItemSOs.");
         }
     }
 }

@@ -69,9 +69,11 @@ namespace Sdurlanik.Merge2.Editor
 
         private void AutoFillData(ItemSO itemSO)
         {
-            var generatedName = $"{itemSO.Family}_{itemSO.Level}";
+            var generatedName = $"{itemSO.Family.ToString().ToLower()}_{itemSO.Level}";
+            var fileName = $"{_editorSettings.FileNamePrefix}{generatedName}";
             
-            var foundIcon = EditorAssetHelper.FindAssetByName<Sprite>(generatedName);
+            var spritePrefix = _editorSettings.IconSpritePrefix;
+            var foundIcon = EditorAssetHelper.FindAssetByName<Sprite>(spritePrefix + generatedName);
             if(foundIcon == null)
             {
                 Debug.LogWarning($"Icon not found for: '{generatedName}'");
@@ -86,7 +88,7 @@ namespace Sdurlanik.Merge2.Editor
             serializedObject.ApplyModifiedProperties();
 
             string assetPath = AssetDatabase.GetAssetPath(itemSO);
-            AssetDatabase.RenameAsset(assetPath, generatedName);
+            AssetDatabase.RenameAsset(assetPath, fileName);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf5ddf6149c45c5871a450b99fd3fb6, type: 3}
+  m_Name: so_settings_level_design
+  m_EditorClassIdentifier: 
+  InitiallyUnlockedCells:
+  - {x: 1, y: 1}
+  - {x: 1, y: 2}
+  - {x: 1, y: 3}
+  - {x: 2, y: 3}
+  ManualItemPlacements:
+  - GridPosition: {x: 1, y: 1}
+    ItemToPlace: {fileID: 11400000, guid: ddf1cf3bbd58a3a479b0345aa781ec64, type: 2}
+  - GridPosition: {x: 1, y: 2}
+    ItemToPlace: {fileID: 11400000, guid: ddf1cf3bbd58a3a479b0345aa781ec64, type: 2}
+  - GridPosition: {x: 1, y: 3}
+    ItemToPlace: {fileID: 11400000, guid: c280ab4188d2f714893c7e817641f91a, type: 2}
+  - GridPosition: {x: 2, y: 3}
+    ItemToPlace: {fileID: 11400000, guid: c64e6a4b10f74634eb681e99ec8ef597, type: 2}
+  - GridPosition: {x: 3, y: 3}
+    ItemToPlace: {fileID: 11400000, guid: 1f0e70005679a3941a48f5a065c07f74, type: 2}
+  ProceduralItemPool:
+  - {fileID: 11400000, guid: 09ba11965825c8a4e9ffdc35c1e0d54d, type: 2}
+  - {fileID: 11400000, guid: ad16b323b4118dd46a05714da30b6ac7, type: 2}
+  - {fileID: 11400000, guid: 873293cc6fec84a4e8d143db1538acc0, type: 2}

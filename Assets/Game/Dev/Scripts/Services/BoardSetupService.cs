@@ -10,7 +10,7 @@ namespace Sdurlanik.Merge2.Services
 {
     public static class BoardSetupService
     {
-      public static void SetupInitialBoard(LevelDesignSettingsSO levelDesign)
+        public static void SetupInitialBoard(LevelDesignSettingsSO levelDesign)
         {
             if (levelDesign == null)
             {
@@ -20,15 +20,31 @@ namespace Sdurlanik.Merge2.Services
 
             var gridManager = ServiceLocator.Get<GridManager>();
             var allCells = gridManager.GetAllCells().ToList();
-            
-            var placementMap = levelDesign.InitialItems.ToDictionary(p => p.GridPosition, p => p.ItemToPlace);
+
+            var manualPlacementMap =
+                levelDesign.ManualItemPlacements.ToDictionary(p => p.GridPosition, p => p.ItemToPlace);
             var unlockedPositions = new HashSet<Vector2Int>(levelDesign.InitiallyUnlockedCells);
 
             foreach (var cell in allCells)
             {
                 cell.Init(cell.GridPos);
+                ItemSO itemToPlace = null;
 
-                if (placementMap.TryGetValue(cell.GridPos, out ItemSO itemToPlace))
+                if (manualPlacementMap.TryGetValue(cell.GridPos, out var manualItem))
+                {
+                    itemToPlace = manualItem;
+                }
+
+                else if (!unlockedPositions.Contains(cell.GridPos))
+                {
+                    if (levelDesign.ProceduralItemPool != null && levelDesign.ProceduralItemPool.Count > 0)
+                    {
+                        itemToPlace =
+                            levelDesign.ProceduralItemPool[Random.Range(0, levelDesign.ProceduralItemPool.Count)];
+                    }
+                }
+
+                if (itemToPlace != null)
                 {
                     ItemFactory.Create(itemToPlace, cell);
                 }
@@ -42,42 +58,8 @@ namespace Sdurlanik.Merge2.Services
                     cell.TransitionTo(Cell.LockedHidden);
                 }
             }
-            
-            PlaceStartingItems();
+
             EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
-        }
-
-        private static void PlaceStartingItems()
-        {
-            var gridManager = ServiceLocator.Get<GridManager>();
-            var dataBank = ServiceLocator.Get<DataBank>();
-            
-            var itemsToSpawn = new List<ItemSO>
-            {
-                dataBank.GetSO(ItemFamily.G1, 1),
-                dataBank.GetSO(ItemFamily.G1, 1),
-                dataBank.GetSO(ItemFamily.G1, 2),
-                dataBank.GetSO(ItemFamily.G1, 3),
-                dataBank.GetSO(ItemFamily.G1, 4)
-            };
-
-            var availableCells = gridManager.GetAvailableCells().ToList();
-
-            Debug.Log("Available cells count: " + availableCells.Count);
-            foreach (var so in itemsToSpawn)
-            {
-                if (availableCells.Count > 0)
-                {
-                    var cellToPlaceIn = availableCells[0];
-                    ItemFactory.Create(so, cellToPlaceIn);
-                    availableCells.RemoveAt(0);
-                }
-                else
-                {
-                    Debug.LogWarning("Not enough available cells to place all starting items.");
-                    break;
-                }
-            }
         }
     }
 }

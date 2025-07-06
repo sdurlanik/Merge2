@@ -17,7 +17,7 @@ namespace Sdurlanik.Merge2.Services
 
             if (a.ItemDataSO.Family == b.ItemDataSO.Family && a.ItemDataSO.Level == b.ItemDataSO.Level)
             {
-                nextSO = ServiceLocator.Get<DataBank>().GetSO(a.ItemDataSO.Family, a.ItemDataSO.Level + 1);
+                nextSO = ServiceLocator.Get<DataManager>().GetSO(a.ItemDataSO.Family, a.ItemDataSO.Level + 1);
                 return nextSO != null;
             }
             return false;

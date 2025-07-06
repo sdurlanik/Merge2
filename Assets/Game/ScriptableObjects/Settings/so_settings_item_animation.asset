@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f91489d1419e49368522ca930c0edbb0, type: 3}
+  m_Name: so_settings_item_animation
+  m_EditorClassIdentifier: 
+  MoveDuration: 0.25
+  MoveEase: 6
+  SnapBackDuration: 0.3
+  SnapBackEase: 27
+  MergeDuration: 0.2
+  MergeEase: 26
+  AppearDuration: 0.3
+  AppearEase: 27
+  ConsumeDuration: 0.3
+  ConsumeEase: 26

@@ -15,7 +15,7 @@ namespace Sdurlanik.Merge2.Managers
         [SerializeField] private GridManager _gridManager;
         [SerializeField] private OrderManager _orderManager;
         [SerializeField] private CurrencyManager _currencyManager;
-        [SerializeField] private DataBank _dataBank;
+        [SerializeField] private DataManager _dataManager;
         [SerializeField] private ItemInteractionManager _itemInteractionManager;
         [SerializeField] private ObjectPooler _objectPooler;
         [SerializeField] private AnimationManager _animationManager;
@@ -31,7 +31,7 @@ namespace Sdurlanik.Merge2.Managers
             ServiceLocator.Register(_orderManager);
             ServiceLocator.Register(_gridManager);
             ServiceLocator.Register(_currencyManager);
-            ServiceLocator.Register(_dataBank);
+            ServiceLocator.Register(_dataManager);
             ServiceLocator.Register(_itemInteractionManager);
             ServiceLocator.Register(_objectPooler);
             
