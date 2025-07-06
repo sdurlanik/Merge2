@@ -137,53 +137,37 @@ namespace Sdurlanik.Merge2.GridSystem
                     }
                 }
             }
-            
-            foreach (var cell in _cells)
+
+            for (var i = 0; i < _cells.Count; i++)
             {
+                var cell = _cells[i];
                 if (!cell.IsEmpty) cell.DestroyItem();
             }
-            
+
             foreach (var itemData in savedItems)
             {
                 var cell = GetCellAt(itemData.CellGridPosition);
                 var itemSO = ServiceLocator.Get<DataManager>().GetSOByName(itemData.ItemSOName);
                 if (cell != null && itemSO != null && cell.IsEmpty)
                 {
-                    //TODO: first load maybe should create item without animation?
                     ItemFactory.Create(itemSO, cell);
                 }
             }
         }
         
-        public Cell GetCellAt(Vector2Int gridPos)
+        private Cell GetCellAt(Vector2Int gridPos)
         {
-            return _cells.FirstOrDefault(c => c.GridPos == gridPos);
+            return GridUtils.GetCellAt(gridPos, _cells);
         }
 
-        public List<Cell> GetAvailableCells()
+        private List<Cell> GetNeighbors(Cell cell)
         {
-            return _cells.Where(c => c.CurrentState == Cell.Unlocked && c.IsEmpty).ToList();
-        }
-
-        private List<Cell> GetNeighbors(Cell cell) //TODO: GridUtils
-        {
-            var neighbors = new List<Cell>();
-            var pos = cell.GridPos;
-
-            int[] dx = { 0, 0, 1, -1 };
-            int[] dy = { 1, -1, 0, 0 };
-
-            for (int i = 0; i < 4; i++)
-            {
-                var neighborPos = new Vector2Int(pos.x + dx[i], pos.y + dy[i]);
-
-                if (neighborPos.x >= 0 && neighborPos.x < _gridSettings.Size && neighborPos.y >= 0 && neighborPos.y < _gridSettings.Size)
-                {
-                    neighbors.Add(GetCellAt(neighborPos));
-                }
-            }
-
-            return neighbors;
+            var neighborPositions = GridUtils.GetNeighborPositions(cell.GridPos, _gridSettings.Size);
+        
+            return neighborPositions
+                .Select(GetCellAt) 
+                .Where(c => c != null)         
+                .ToList();                     
         }
 
         public void RevealNeighborsOf(Cell cell)
