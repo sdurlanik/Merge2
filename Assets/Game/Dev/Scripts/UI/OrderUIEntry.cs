@@ -1,9 +1,7 @@
-﻿using System;
-using DG.Tweening;
+﻿using DG.Tweening;
 using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Data.Orders;
 using Sdurlanik.Merge2.Managers;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,26 +19,15 @@ namespace Sdurlanik.Merge2.UI
 
         [Header("Prefabs")]
         [SerializeField] private RequirementIconUI _requirementIconPrefab;
-
+        
         public Order CurrentOrder { get; private set; }
         private CanvasGroup _canvasGroup;
-        private AnimationManager _animationManager;
-        private OrderStatus _previousStatus;
+        private OrderStatus _lastKnownStatus;
 
         private void Awake()
         {
-            _canvasGroup = GetComponent<CanvasGroup>();
+            _canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
             _completeButton.onClick.AddListener(OnCompleteButtonPressed);
-        }
-
-        private void Start()
-        {
-            _animationManager = ServiceLocator.Get<AnimationManager>();
-        }
-
-        private void OnDisable()
-        {
-            transform.DOKill();
         }
 
         public void InitializeAndAnimateIn(Order order, float delay)
@@ -51,23 +38,24 @@ namespace Sdurlanik.Merge2.UI
 
         public void UpdateDisplay(Order order)
         {
-            var oldStatus = CurrentOrder?.Status;
-            CurrentOrder = order; 
-            PopulateData(order);
             
-            var newStatus = CurrentOrder.Status;
-            if (newStatus == OrderStatus.ReadyToComplete && oldStatus != OrderStatus.ReadyToComplete)
+            var isNowReady = order.Status == OrderStatus.ReadyToComplete;
+            if (isNowReady && _lastKnownStatus  != OrderStatus.ReadyToComplete)
             {
+                Debug.Log("Order is now ready to complete: " + order.OrderData.OrderName);
                 AnimateReadyStatePop();
             }
+            
+            PopulateData(order);
         }
-
-        public void AnimateOutAndRepopulate(Order newOrder)
+        
+        public void AnimateOut(System.Action onComplete = null)
         {
-            _completeButton.gameObject.SetActive(false);
-            _animationManager.PlayUIEntryOutAnimation(transform, _canvasGroup, () =>
+            ServiceLocator.Get<AnimationManager>().PlayUIEntryOutAnimation(transform, _canvasGroup, () =>
             {
-                InitializeAndAnimateIn(newOrder, 0f);
+                gameObject.SetActive(false);
+                CurrentOrder = null;
+                onComplete?.Invoke();
             });
         }
         
@@ -83,15 +71,9 @@ namespace Sdurlanik.Merge2.UI
                 iconInstance.SetRequirement(requirement.RequiredItem);
             }
 
-            var isNowReady = CurrentOrder.Status == OrderStatus.ReadyToComplete;
-            _completeButton.gameObject.SetActive(isNowReady);
-            
-            if (isNowReady && _previousStatus != OrderStatus.ReadyToComplete)
-            {
-                ServiceLocator.Get<AnimationManager>().PlayUIReadyStateAnimation(_completeButton.transform);
-            }
-            
-            _previousStatus = CurrentOrder.Status;
+            var isActive = CurrentOrder.Status == OrderStatus.ReadyToComplete;
+            _completeButton.gameObject.SetActive(isActive);
+            _lastKnownStatus = CurrentOrder.Status;
         }
 
         private void OnCompleteButtonPressed()
@@ -105,7 +87,8 @@ namespace Sdurlanik.Merge2.UI
         
         private void AnimateReadyStatePop()
         {
-            _animationManager.PlayUIReadyStateAnimation(transform);
+            ServiceLocator.Get<AnimationManager>().PlayUIReadyStateAnimation(transform);
+            
         }
     }
 }

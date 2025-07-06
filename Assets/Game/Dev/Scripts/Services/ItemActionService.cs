@@ -57,9 +57,9 @@ namespace Sdurlanik.Merge2.Services
             {
                 objectPooler.ReturnObjectToPool(a.ItemDataSO.ItemPrefab.name, a.gameObject);
                 objectPooler.ReturnObjectToPool(b.ItemDataSO.ItemPrefab.name, b.gameObject);
-                ItemFactory.Create(resultSO, targetCell);
                 gridManager.RevealNeighborsOf(targetCell);
                 onMergeComplete?.Invoke();
+                ItemFactory.Create(resultSO, targetCell);
             };
         
             a.CurrentCell.ClearItem();

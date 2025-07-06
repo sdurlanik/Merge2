@@ -3,36 +3,36 @@ using Sdurlanik.Merge2.Data;
 using Sdurlanik.Merge2.GridSystem;
 using System.Collections.Generic;
 using System.Linq;
+using Sdurlanik.Merge2.Events;
 using UnityEngine;
 
 namespace Sdurlanik.Merge2.Services
 {
     public static class BoardSetupService
     {
-        public static void SetupInitialBoard(LevelDesignSettingsSO levelDesignSettings)
+      public static void SetupInitialBoard(LevelDesignSettingsSO levelDesign)
         {
-            if (levelDesignSettings == null)
+            if (levelDesign == null)
             {
-                Debug.LogError("LevelDesignSettingsSO is null. Cannot setup initial board.");
+                Debug.LogError("LevelDesignSettingsSO is null! Cannot setup initial board.");
                 return;
             }
 
             var gridManager = ServiceLocator.Get<GridManager>();
             var allCells = gridManager.GetAllCells().ToList();
-
-            foreach (var placement in levelDesignSettings.InitialItems)
-            {
-                var cell = gridManager.GetCellAt(placement.GridPosition);
-                if (cell != null && cell.IsEmpty)
-                {
-                    ItemFactory.Create(placement.ItemToPlace, cell);
-                }
-            }
-
-            var unlockedPositions = new HashSet<Vector2Int>(levelDesignSettings.InitiallyUnlockedCells);
+            
+            var placementMap = levelDesign.InitialItems.ToDictionary(p => p.GridPosition, p => p.ItemToPlace);
+            var unlockedPositions = new HashSet<Vector2Int>(levelDesign.InitiallyUnlockedCells);
 
             foreach (var cell in allCells)
             {
+                cell.Init(cell.GridPos);
+
+                if (placementMap.TryGetValue(cell.GridPos, out ItemSO itemToPlace))
+                {
+                    ItemFactory.Create(itemToPlace, cell);
+                }
+
                 if (unlockedPositions.Contains(cell.GridPos))
                 {
                     cell.TransitionTo(Cell.Unlocked);
@@ -43,12 +43,15 @@ namespace Sdurlanik.Merge2.Services
                 }
             }
             
-            FillCustomCells();
+            PlaceStartingItems();
+            EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
         }
 
-        private static void FillCustomCells()
+        private static void PlaceStartingItems()
         {
+            var gridManager = ServiceLocator.Get<GridManager>();
             var dataBank = ServiceLocator.Get<DataBank>();
+            
             var itemsToSpawn = new List<ItemSO>
             {
                 dataBank.GetSO(ItemFamily.G1, 1),
@@ -57,12 +60,22 @@ namespace Sdurlanik.Merge2.Services
                 dataBank.GetSO(ItemFamily.G1, 3),
                 dataBank.GetSO(ItemFamily.G1, 4)
             };
-           
+
+            var availableCells = gridManager.GetAvailableCells().ToList();
+
+            Debug.Log("Available cells count: " + availableCells.Count);
             foreach (var so in itemsToSpawn)
             {
-                if (ServiceLocator.Get<GridManager>().TryGetEmptyCell(out var cell))
+                if (availableCells.Count > 0)
                 {
-                    ItemFactory.Create(so, cell);
+                    var cellToPlaceIn = availableCells[0];
+                    ItemFactory.Create(so, cellToPlaceIn);
+                    availableCells.RemoveAt(0);
+                }
+                else
+                {
+                    Debug.LogWarning("Not enough available cells to place all starting items.");
+                    break;
                 }
             }
         }

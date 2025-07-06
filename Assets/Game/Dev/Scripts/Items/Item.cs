@@ -5,6 +5,7 @@ using Sdurlanik.Merge2.GridSystem;
 using Sdurlanik.Merge2.Items.Behaviours;
 using Sdurlanik.Merge2.Data;
 using Sdurlanik.Merge2.Events;
+using Sdurlanik.Merge2.Managers;
 using UnityEngine;
 
 namespace Sdurlanik.Merge2.Items
@@ -22,7 +23,7 @@ namespace Sdurlanik.Merge2.Items
         private DraggableBehavior _draggableBehavior;
         private bool _isBeingDragged;
 
-        private void OnEnable()
+        private void OnEnable() // move to own method
         {
             EventBus<ItemTappedEvent>.OnEvent += HandleTap;
             EventBus<ItemDragBeganEvent>.OnEvent += HandleDragBegan;
@@ -70,6 +71,7 @@ namespace Sdurlanik.Merge2.Items
 
         public void OnTap()
         {
+            ServiceLocator.Get<AnimationManager>().PlayItemTapAnimation(transform);
             _producerBehavior?.OnTap();
         }
 

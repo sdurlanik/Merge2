@@ -55,8 +55,8 @@ namespace Sdurlanik.Merge2.Managers
 
         public void PlayItemMoveAnimation(Transform target, Vector3 targetPosition)
         {
-            target.DOKill();
-            target.DOMove(targetPosition, _itemAnimationSettings.MoveDuration).SetEase(_itemAnimationSettings.MoveEase);
+            target.DOComplete();
+            target.DOLocalMove(targetPosition, _itemAnimationSettings.MoveDuration).SetEase(_itemAnimationSettings.MoveEase);
         }
 
         public void PlayItemSnapBackAnimation(Transform target)
@@ -68,7 +68,6 @@ namespace Sdurlanik.Merge2.Managers
         public void PlayItemAppearAnimation(Transform target)
         {
             target.DOKill();
-            target.localScale = Vector3.zero;
             target.DOScale(Vector3.one, _itemAnimationSettings.AppearDuration).SetEase(_itemAnimationSettings.AppearEase);
         }
         
@@ -130,6 +129,18 @@ namespace Sdurlanik.Merge2.Managers
             target.DOKill();
             target.DOScale(Vector3.one, _itemAnimationSettings.MergePreviewDuration)
                 .SetEase(_itemAnimationSettings.MergePreviewEase);
+        }
+        
+        public void PlayItemTapAnimation(Transform target)
+        {
+            target.DOComplete();
+        
+            target.DOPunchScale(
+                _itemAnimationSettings.TapPunchAmount,
+                _itemAnimationSettings.TapAnimationDuration,
+                _itemAnimationSettings.TapVibrato,
+                _itemAnimationSettings.TapElasticity
+            );
         }
         #endregion
     }

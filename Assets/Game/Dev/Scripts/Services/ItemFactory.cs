@@ -18,11 +18,10 @@ namespace Sdurlanik.Merge2.Services
                 var newItem = newItemObject.GetComponent<Item>();
             
                 newItem.Init(so);
-                newItemObject.transform.position = targetCell.transform.position;
+        
                 targetCell.PlaceItem(newItem);
-                newItemObject.SetActive(true);
-                
                 ServiceLocator.Get<AnimationManager>().PlayItemAppearAnimation(newItem.transform);
+        
                 EventBus<BoardStateChangedEvent>.Publish(new BoardStateChangedEvent());
 
                 return newItem;

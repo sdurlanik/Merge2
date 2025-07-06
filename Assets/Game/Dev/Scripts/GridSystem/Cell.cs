@@ -1,10 +1,12 @@
 ﻿using System;
+using DG.Tweening;
 using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Events;
 using Sdurlanik.Merge2.GridSystem.CellStates;
 using Sdurlanik.Merge2.Items;
 using Sdurlanik.Merge2.Managers;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Sdurlanik.Merge2.GridSystem
 {
@@ -16,7 +18,8 @@ namespace Sdurlanik.Merge2.GridSystem
         public ICellState CurrentState => _currentState;
         
         [SerializeField] private GameObject _orderHighlight;
-        [SerializeField] private SpriteRenderer _background;
+        [SerializeField] private SpriteRenderer _lockedOverlay;
+        [SerializeField] private SpriteRenderer _lockedRevealedOverlay;
         
         private ICellState _currentState;
         public static readonly ICellState LockedHidden = new CellLockedHiddenState();
@@ -25,20 +28,23 @@ namespace Sdurlanik.Merge2.GridSystem
         public void Init(Vector2Int gridPos)
         {
             GridPos = gridPos;
-            TransitionTo(LockedHidden);
         }
         public void TransitionTo(ICellState newState)
         {
             _currentState?.OnExit(this);
             _currentState = newState;
             _currentState.OnEnter(this);
+            
+            UpdateItemVisibility();
         }
         public void PlaceItem(Item item)
         {
             OccupiedItem = item;
             item.transform.SetParent(transform);
-            ServiceLocator.Get<AnimationManager>().PlayItemMoveAnimation(item.transform, transform.position);
+            item.transform.localPosition = Vector3.zero;
             item.SetCurrentCell(this);
+            
+            UpdateItemVisibility();
         }
 
         public void ClearItem()
@@ -75,23 +81,56 @@ namespace Sdurlanik.Merge2.GridSystem
                 _orderHighlight.SetActive(isActive);
             }
         }
+
+  
+        public void ShowUnlockedVisuals(float duration = 0.3f)
+        {
+            _lockedOverlay.DOFade(0, duration);
+            _lockedRevealedOverlay.DOFade(0, duration);
+            ShowItem(duration);
+        }
+
+        public void ShowLockedHiddenVisuals(float duration = 0.3f)
+        {
+            _lockedOverlay.DOFade(1, duration);
+            _lockedRevealedOverlay.DOFade(0, duration);
+            HideItem(duration);
+        }
+
+        public void ShowLockedRevealedVisuals(float duration = 0.3f)
+        {
+            _lockedOverlay.DOFade(0, duration);
+            _lockedRevealedOverlay.DOFade(1, duration);
+            ShowItem(duration);
+        }
+        
+        private void ShowItem(float duration)
+        {
+            if (IsEmpty) return;
+            OccupiedItem.gameObject.SetActive(true);
+            OccupiedItem.GetComponent<SpriteRenderer>()?.DOFade(1, duration);
+        }
+
+        private void HideItem(float duration)
+        {
+            if (IsEmpty) return;
+            OccupiedItem.GetComponent<SpriteRenderer>()?.DOFade(0, duration)
+                .OnComplete(() => OccupiedItem.gameObject.SetActive(false));
+        }
         
         public bool OnItemDropped(Item sourceItem)
         {
             return _currentState.OnItemDropped(sourceItem, this);
         }
         
-        public void UpdateVisuals(Color backgroundColor, bool showItem)
+        private void UpdateItemVisibility()
         {
-            if (_background != null)
-            {
-                _background.color = backgroundColor;
-            }
+            if (IsEmpty) return;
 
-            if (!IsEmpty)
-            {
-                OccupiedItem.gameObject.SetActive(showItem);
-            }
+            bool shouldBeVisible = CurrentState == Unlocked || CurrentState == LockedRevealed;
+            
+            OccupiedItem.gameObject.SetActive(shouldBeVisible);
         }
+  
     }
 }

@@ -20,5 +20,10 @@ namespace Sdurlanik.Merge2.Data
         public float MergePreviewScale = 1.2f; 
         public float MergePreviewDuration = 0.2f;
         public Ease MergePreviewEase = Ease.OutSine;
+        
+        public Vector3 TapPunchAmount = new Vector3(0.2f, 0.2f, 0f);
+        public float TapAnimationDuration = 0.5f;
+        public int TapVibrato = 10;
+        public float TapElasticity = 0.5f;
     }
 }

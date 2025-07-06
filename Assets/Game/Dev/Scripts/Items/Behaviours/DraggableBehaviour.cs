@@ -33,6 +33,7 @@ namespace Sdurlanik.Merge2.Items.Behaviours
    
        public void OnBeginDrag()
        {
+           _transform.DOKill();
            _originalParent = _transform.parent;
            _transform.SetParent(null); 
            
