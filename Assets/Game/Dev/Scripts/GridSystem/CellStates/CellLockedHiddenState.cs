@@ -5,14 +5,14 @@ namespace Sdurlanik.Merge2.GridSystem.CellStates
 {
     public class CellLockedHiddenState : ICellState
     {
+        public CellState StateType => CellState.LockedHidden;
+
         public void OnEnter(Cell cell)
         {
-            cell.UpdateVisuals(new Color(0.1f, 0.1f, 0.1f, 1f), false);
+            cell.ShowLockedHiddenVisuals();
             cell.SetHighlight(false);
         }
-
         public void OnExit(Cell cell) { }
-        
         public bool OnItemDropped(Item sourceItem, Cell targetCell) => false;
     }
 }

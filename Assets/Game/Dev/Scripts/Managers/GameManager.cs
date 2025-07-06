@@ -63,13 +63,17 @@ namespace Sdurlanik.Merge2.Managers
         
         private void SaveGameState()
         {
+            Debug.Log("Saving game state...");
+            var (items, cells) = ServiceLocator.Get<GridManager>().GetItemsForSaving();
+        
             var data = new PlayerData
             {
                 Coins = ServiceLocator.Get<CurrencyManager>().CurrentCoins,
-                GridItems = ServiceLocator.Get<GridManager>().GetItemsForSaving(),
+                GridItems = items,
+                CellStates = cells,
                 ActiveOrderSONames = ServiceLocator.Get<OrderManager>().GetOrdersForSaving()
             };
-            
+        
             SaveLoadService.SaveGame(data);
         }
         
@@ -79,15 +83,14 @@ namespace Sdurlanik.Merge2.Managers
             var data = SaveLoadService.LoadGame();
             
             ServiceLocator.Get<CurrencyManager>().LoadCurrency(data.Coins);
-            
             ServiceLocator.Get<GridManager>().CreateGrid();
             
-            if (data.GridItems.Count > 0)
+            if (data.CellStates.Count > 0)
             {
-                ServiceLocator.Get<GridManager>().LoadItemsFromSave(data.GridItems);
+                ServiceLocator.Get<GridManager>().LoadItemsFromSave(data.GridItems, data.CellStates);
                 ServiceLocator.Get<OrderManager>().LoadOrdersFromSave(data.ActiveOrderSONames);
             }
-            else
+            else 
             {
                 BoardSetupService.SetupInitialBoard(_currentLevelDesignSettings);
                 ServiceLocator.Get<OrderManager>().TryToGenerateNewOrders();

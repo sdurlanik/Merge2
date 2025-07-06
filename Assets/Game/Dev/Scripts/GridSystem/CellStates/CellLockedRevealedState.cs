@@ -6,11 +6,12 @@ namespace Sdurlanik.Merge2.GridSystem.CellStates
 {
     public class CellLockedRevealedState : ICellState
     {
+        public CellState StateType => CellState.LockedRevealed;
+
         public void OnEnter(Cell cell)
         {
-            cell.UpdateVisuals(new Color(0.2f, 0.2f, 0.2f, 0.7f), true);
+            cell.ShowLockedRevealedVisuals();
         }
-
         public void OnExit(Cell cell) { }
 
         public bool OnItemDropped(Item sourceItem, Cell targetCell)

@@ -3,6 +3,7 @@ using System.Linq;
 using Sdurlanik.Merge2.Core;
 using Sdurlanik.Merge2.Data;
 using Sdurlanik.Merge2.Data.Orders;
+using Sdurlanik.Merge2.GridSystem.CellStates;
 using Sdurlanik.Merge2.Services;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -91,11 +92,18 @@ namespace Sdurlanik.Merge2.GridSystem
             }
         }
         
-        public List<ItemSaveData> GetItemsForSaving()
+        public (List<ItemSaveData> items, List<CellSaveData> cells) GetItemsForSaving()
         {
             var itemsToSave = new List<ItemSaveData>();
+            var cellsToSave = new List<CellSaveData>();
             foreach (var cell in _cells)
             {
+                cellsToSave.Add(new CellSaveData
+                {
+                    GridPosition = cell.GridPos,
+                    State = cell.CurrentState.StateType,
+                });
+
                 if (!cell.IsEmpty)
                 {
                     itemsToSave.Add(new ItemSaveData
@@ -105,11 +113,31 @@ namespace Sdurlanik.Merge2.GridSystem
                     });
                 }
             }
-            return itemsToSave;
+            return (itemsToSave, cellsToSave);
         }
 
-        public void LoadItemsFromSave(List<ItemSaveData> savedItems)
+        public void LoadItemsFromSave(List<ItemSaveData> savedItems, List<CellSaveData> savedCellStates)
         {
+            foreach (var cellData in savedCellStates)
+            {
+                var cell = GetCellAt(cellData.GridPosition);
+                if (cell != null)
+                {
+                    switch (cellData.State)
+                    {
+                        case CellState.LockedHidden:
+                            cell.TransitionTo(Cell.LockedHidden);
+                            break;
+                        case CellState.LockedRevealed:
+                            cell.TransitionTo(Cell.LockedRevealed);
+                            break;
+                        case CellState.Unlocked:
+                            cell.TransitionTo(Cell.Unlocked);
+                            break;
+                    }
+                }
+            }
+            
             foreach (var cell in _cells)
             {
                 if (!cell.IsEmpty) cell.DestroyItem();
@@ -121,6 +149,7 @@ namespace Sdurlanik.Merge2.GridSystem
                 var itemSO = ServiceLocator.Get<DataBank>().GetSOByName(itemData.ItemSOName);
                 if (cell != null && itemSO != null && cell.IsEmpty)
                 {
+                    //TODO: first load maybe should create item without animation?
                     ItemFactory.Create(itemSO, cell);
                 }
             }
@@ -131,7 +160,12 @@ namespace Sdurlanik.Merge2.GridSystem
             return _cells.FirstOrDefault(c => c.GridPos == gridPos);
         }
 
-        private List<Cell> GetNeighbors(Cell cell)
+        public List<Cell> GetAvailableCells()
+        {
+            return _cells.Where(c => c.CurrentState == Cell.Unlocked && c.IsEmpty).ToList();
+        }
+
+        private List<Cell> GetNeighbors(Cell cell) //TODO: GridUtils
         {
             var neighbors = new List<Cell>();
             var pos = cell.GridPos;

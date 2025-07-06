@@ -12,10 +12,11 @@ namespace Sdurlanik.Merge2.GridSystem.CellStates
         {
             _dropHandlerChain = DropHandlerChainFactory.CreateDefaultChain();
         }
-        
+
+        public CellState StateType => CellState.Unlocked;
         public void OnEnter(Cell cell)
         {
-            cell.UpdateVisuals(Color.white, true);
+            cell.ShowUnlockedVisuals();
         }
 
         public void OnExit(Cell cell) { }
