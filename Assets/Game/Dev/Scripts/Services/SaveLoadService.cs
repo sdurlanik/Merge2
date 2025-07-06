@@ -8,7 +8,7 @@ namespace Sdurlanik.Merge2.Services
     {
         private static readonly string SaveFileName = "playerdata.json";
 
-        private static string GetSavePath()
+        public static string GetSavePath()
         {
             return Path.Combine(Application.persistentDataPath, SaveFileName);
         }
