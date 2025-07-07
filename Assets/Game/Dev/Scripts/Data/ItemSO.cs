@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Sdurlanik.Merge2.Data
 {
+    public enum ItemFamily { G1, P1, P2 }
     public class ItemSO : ScriptableObject
     {
         [Header("Item Settings")]

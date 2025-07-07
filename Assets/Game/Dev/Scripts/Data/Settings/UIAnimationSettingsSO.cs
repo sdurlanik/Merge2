@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Sdurlanik.Merge2.Data
 {
     [CreateAssetMenu(fileName = "UIAnimationSettings", menuName = "Merge2/Settings/UI Animation Settings")]
-    public class UIAnimationSettings : ScriptableObject
+    public class UIAnimationSettingsSO : ScriptableObject
     {
        public float PopScale = 1.1f;
        public float ReadyVibrato = 10f;

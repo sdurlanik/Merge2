@@ -26,7 +26,7 @@ namespace Sdurlanik.Merge2.Items.Behaviours
 
             if (ServiceLocator.Get<GridManager>().TryGetEmptyCell(out var emptyCell))
             {
-                ItemFactory.Create(productToSpawn, emptyCell);
+                ItemFactoryService.Create(productToSpawn, emptyCell);
             }
         }
     }

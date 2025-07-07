@@ -150,7 +150,7 @@ namespace Sdurlanik.Merge2.GridSystem
                 var itemSO = ServiceLocator.Get<DataManager>().GetSOByName(itemData.ItemSOName);
                 if (cell != null && itemSO != null && cell.IsEmpty)
                 {
-                    ItemFactory.Create(itemSO, cell);
+                    ItemFactoryService.Create(itemSO, cell);
                 }
             }
         }

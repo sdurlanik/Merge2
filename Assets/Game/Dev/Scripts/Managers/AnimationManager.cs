@@ -13,7 +13,7 @@ namespace Sdurlanik.Merge2.Managers
 
         
         [SerializeField] private ItemAnimationSettingsSO _itemAnimationSettings;
-        [SerializeField] private UIAnimationSettings _uiAnimationSettings;
+        [SerializeField] private UIAnimationSettingsSO _uiAnimationSettings;
         
         #region UI Animations
 

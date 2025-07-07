@@ -46,7 +46,7 @@ namespace Sdurlanik.Merge2.Services
 
                 if (itemToPlace != null)
                 {
-                    ItemFactory.Create(itemToPlace, cell);
+                    ItemFactoryService.Create(itemToPlace, cell);
                 }
 
                 if (unlockedPositions.Contains(cell.GridPos))

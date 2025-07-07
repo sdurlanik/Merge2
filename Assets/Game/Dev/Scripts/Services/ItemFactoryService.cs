@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Sdurlanik.Merge2.Services
 {
-    public static class ItemFactory
+    public static class ItemFactoryService
     {
         public static Item Create(ItemSO so, Cell targetCell, bool animate = true, bool publishEvents = true)
         {
