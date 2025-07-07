@@ -133,7 +133,7 @@ namespace Sdurlanik.Merge2.Managers
         
         public void PlayItemTapAnimation(Transform target)
         {
-            target.DOComplete();
+            target.DOKill(true);
         
             target.DOPunchScale(
                 _itemAnimationSettings.TapPunchAmount,

@@ -15,7 +15,7 @@ MonoBehaviour:
   OrderName: 4
   RequiredItems:
   - RequiredItem: {fileID: 11400000, guid: 09ba11965825c8a4e9ffdc35c1e0d54d, type: 2}
-  - RequiredItem: {fileID: 11400000, guid: 09ba11965825c8a4e9ffdc35c1e0d54d, type: 2}
+  - RequiredItem: {fileID: 11400000, guid: 4c813e5716b840f47b64061c77e82018, type: 2}
   BaseCoinReward: 30
   CoinRewardPerLevelMultiplier: 1.5
   RequiredGeneratorMinLevel: 1
