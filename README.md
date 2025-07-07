@@ -118,6 +118,10 @@ Proje, üç belirgin kavramsal katmana ayrılmıştır:
 | **I (Arayüz Ayırımı)** | `IDraggable`, `ITappable` gibi küçük ve özelleşmiş arayüzler. |
 | **D (Bağımlılıkların Tersine Çevrilmesi)** | `EventBus`, UI ve Mantık katmanlarını olaylar üzerinden soyutlamalarla bağlar. |
 
+## 🛠️ Level Design Tool Kullanımı
+
+![Level Design Tool Kullanımı](level_design_tool_usage_.gif)
+
 ---
 
 > Bu mimari yapı, Merge2'nin sürdürülebilir bir şekilde gelişmesini ve genişlemesini kolaylaştırır.
